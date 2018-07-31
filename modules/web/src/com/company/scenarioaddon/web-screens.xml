@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<screen-config xmlns="http://schemas.haulmont.com/cuba/screens.xsd">
+    <screen id="scenarioaddon$TestEntity.browse"
+            template="com/company/scenarioaddon/web/testentity/test-entity-browse.xml"/>
+    <screen id="scenarioaddon$TestEntity.edit"
+            template="com/company/scenarioaddon/web/testentity/test-entity-edit.xml"/>
+</screen-config>
