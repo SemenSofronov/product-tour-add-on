@@ -11,8 +11,7 @@ import java.util.Objects;
 
 public class TestEntityBrowse extends AbstractLookup {
 
-    @Inject
-    protected Button tutorialButton;
+    protected static int counter = 0;
 
     @Inject
     protected Button createBtn;
@@ -30,15 +29,13 @@ public class TestEntityBrowse extends AbstractLookup {
         super.init(params);
         WebTour webTour = new WebTour();
 
-        tutorialButton.setAction(webTour.startAction());
-
-        WebStep webStep1 = new WebStep("step1", tutorialButton, Step.StepAnchor.RIGHT);
-        webStep1.setTitle("Tutorial tour is started!");
+        WebStep webStep1 = new WebStep();
+        webStep1.setTitle(getMessage("webStep1.title"));
         webStep1.setText("Welcome to our tutorial tour! Let us see how you can use it.");
         webStep1.addButton(new WebStepButton("Cancel", HaloTheme.BUTTON_DANGER, WebTourActions::cancel));
         webStep1.addButton(new WebStepButton("Next", HaloTheme.BUTTON_FRIENDLY, WebTourActions::next));
 
-        WebStep webStep2 = new WebStep("step2", createBtn, Step.StepAnchor.RIGHT);
+        WebStep webStep2 = new WebStep("step2", createBtn);
         webStep2.setTitle("<i>Create Button</i>");
         webStep2.setTitleContentMode(Step.ContentMode.HTML);
         webStep2.setText("It is a <i>create button</i>.<br>To create a new entity you may to press the button.");
@@ -46,7 +43,7 @@ public class TestEntityBrowse extends AbstractLookup {
         webStep2.addButton(new WebStepButton("Back", HaloTheme.BUTTON_PRIMARY, WebTourActions::back));
         webStep2.addButton(new WebStepButton("Next", HaloTheme.BUTTON_FRIENDLY, WebTourActions::next));
 
-        WebStep webStep3 = new WebStep("step3", editBtn, Step.StepAnchor.RIGHT);
+        WebStep webStep3 = new WebStep("step3", editBtn);
         webStep3.setTitle("<i>Edit Button</i>");
         webStep3.setTitleContentMode(Step.ContentMode.HTML);
         webStep3.setText("It is an <i>edit button</i>.<br>To edit an entity you may to select it in the table and " +
@@ -55,7 +52,7 @@ public class TestEntityBrowse extends AbstractLookup {
         webStep3.addButton(new WebStepButton("Back", HaloTheme.BUTTON_PRIMARY, WebTourActions::back));
         webStep3.addButton(new WebStepButton("Next", HaloTheme.BUTTON_FRIENDLY, WebTourActions::next));
 
-        WebStep webStep4 = new WebStep("step4", removeBtn, Step.StepAnchor.RIGHT);
+        WebStep webStep4 = new WebStep("step4", removeBtn);
         webStep4.setTitle("<i>Remove Button</i>");
         webStep4.setTitleContentMode(Step.ContentMode.HTML);
         webStep4.setText("It is a <i>remove button</i>.<br>To remove an entity you may to select it in the table and " +
@@ -77,12 +74,12 @@ public class TestEntityBrowse extends AbstractLookup {
             WebTourActions.next(() -> webTour);
         }));
 
-        WebStep webStep6 = new WebStep("step6", tutorialButton, Step.StepAnchor.RIGHT);
-        webStep6.setTitle("<i>Editor</i>");
-        webStep6.setTitleContentMode(Step.ContentMode.HTML);
-        webStep6.setText("It is an <i>editor screen</i>.<br>Here you can create or edit entities.");
-        webStep6.setTextContentMode(Step.ContentMode.HTML);
-        webStep6.addButton(new WebStepButton("Finish", HaloTheme.BUTTON_FRIENDLY, WebTourActions::next));
+//        WebStep webStep6 = new WebStep("step6");
+//        webStep6.setTitle("<i>Editor</i>");
+//        webStep6.setTitleContentMode(Step.ContentMode.HTML);
+//        webStep6.setText("It is an <i>editor screen</i>.<br>Here you can create or edit entities.");
+//        webStep6.setTextContentMode(Step.ContentMode.HTML);
+//        webStep6.addButton(new WebStepButton("Finish", HaloTheme.BUTTON_FRIENDLY, WebTourActions::next));
 
 
         webTour.addStep(webStep1);
@@ -90,6 +87,10 @@ public class TestEntityBrowse extends AbstractLookup {
         webTour.addStep(webStep3);
         webTour.addStep(webStep4);
         webTour.addStep(webStep5);
-        webTour.addStep(webStep6);
+//        webTour.addStep(webStep6);
+
+        if (TestEntityBrowse.counter++ == 0) {
+            webTour.startAction().actionPerform(null);
+        }
     }
 }

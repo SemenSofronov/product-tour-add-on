@@ -18,8 +18,6 @@
                 width="800"/>
     <layout expand="testEntitiesTable"
             spacing="true">
-        <button id="tutorialButton"
-                caption="msg://Tutorial"/>
         <filter id="filter"
                 applyTo="testEntitiesTable"
                 datasource="testEntitiesDs">

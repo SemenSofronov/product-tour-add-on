@@ -9,6 +9,7 @@ import com.haulmont.cuba.gui.components.Component;
 import com.vaadin.server.Sizeable;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Button;
+import org.vaadin.addons.producttour.shared.step.StepAnchor;
 import org.vaadin.addons.producttour.step.StepCancelListener;
 
 import java.util.ArrayList;
@@ -42,6 +43,37 @@ public class WebStep implements Step, Sizeable {
         AbstractComponent abstractComponent = attachTo.unwrap(AbstractComponent.class);
         step = new org.vaadin.addons.producttour.step.Step(id, abstractComponent, WebWrapperUtils.toVaadinStepAnchor(anchor));
         attachedTo = attachTo;
+        step.setSizeFull();
+    }
+
+    public WebStep(com.haulmont.cuba.gui.components.Component attachTo, StepAnchor anchor) {
+        AbstractComponent abstractComponent = attachTo.unwrap(AbstractComponent.class);
+        step = new org.vaadin.addons.producttour.step.Step(abstractComponent, WebWrapperUtils.toVaadinStepAnchor(anchor));
+        attachedTo = attachTo;
+        step.setSizeFull();
+    }
+
+    public WebStep(String id, com.haulmont.cuba.gui.components.Component attachTo) {
+        AbstractComponent abstractComponent = attachTo.unwrap(AbstractComponent.class);
+        step = new org.vaadin.addons.producttour.step.Step(id, abstractComponent);
+        attachedTo = attachTo;
+        step.setSizeFull();
+    }
+
+    public WebStep(com.haulmont.cuba.gui.components.Component attachTo) {
+        AbstractComponent abstractComponent = attachTo.unwrap(AbstractComponent.class);
+        step = new org.vaadin.addons.producttour.step.Step(abstractComponent);
+        attachedTo = attachTo;
+        step.setSizeFull();
+    }
+
+    public WebStep(String id) {
+        step = new org.vaadin.addons.producttour.step.Step(id);
+        step.setSizeFull();
+    }
+
+    public WebStep() {
+        step = new org.vaadin.addons.producttour.step.Step();
         step.setSizeFull();
     }
 
