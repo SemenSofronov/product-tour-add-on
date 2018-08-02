@@ -7,11 +7,20 @@ package com.company.scenarioaddon.web.gui.components;
 
 import com.haulmont.cuba.gui.components.Component;
 
+import java.util.EventObject;
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface Step {
 
+    <X> X getStep();
+
     void setTour(Tour tour);
+    Tour getTour();
+
+    void setSizeUndefined();
+
+    void setSizeFull();
 
     void setTitle(String title);
     String getTitle();
@@ -19,15 +28,7 @@ public interface Step {
     void setText(String text);
     String getText();
 
-    void setSizeFull();
-
     boolean isVisible();
-
-    List<WebStepButton> getButtons();
-
-    WebStepButton getButtonByIndex(int index);
-
-    int getButtonCount();
 
     String getId();
 
@@ -36,8 +37,6 @@ public interface Step {
     void setAttachedTo(Component component);
 
     void setDetached();
-
-    void setSizeUndefined();
 
     void setCancellable(boolean cancellable);
     boolean isCancellable();
@@ -57,6 +56,16 @@ public interface Step {
     void setAnchor(StepAnchor anchor);
     StepAnchor getAnchor();
 
+    List<StepButton> getButtons();
+
+    StepButton getButtonByIndex(int index);
+
+    int getButtonCount();
+
+    void addButton(StepButton button);
+
+    void removeButton(StepButton button);
+
     void cancel();
 
     void complete();
@@ -66,12 +75,6 @@ public interface Step {
     void show();
 
     void scrollTo();
-
-    Tour getTour();
-
-    void addButton(StepButton button);
-
-    void removeButton(StepButton button);
 
     enum StepAnchor {
         TOP,
@@ -86,64 +89,65 @@ public interface Step {
         HTML
     }
 
-    void addCancelListener(StepCancelListener listener);
+    void addCancelListener(Consumer<CancelEvent> consumer);
 
-    void removeCancelListener(StepCancelListener listener);
+    void removeCancelListener(Consumer<CancelEvent> consumer);
 
-    interface StepCancelListener {
+    class CancelEvent extends StepEvent {
 
-        void onCancel(CancelEvent event);
+        public CancelEvent(Step source) { super(source); }
 
-        class CancelEvent extends StepEvent {
-
-            public CancelEvent(Step source) { super(source); }
-
-        }
     }
 
-    void addCompleteListener(StepCompleteListener listener);
+    void addCompleteListener(Consumer<CompleteEvent> consumer);
 
-    void removeCompleteListener(StepCompleteListener listener);
+    void removeCompleteListener(Consumer<CompleteEvent> consumer);
 
-    interface StepCompleteListener {
-        void onComplete(CompleteEvent event);
+    class CompleteEvent extends StepEvent{
 
-        class CompleteEvent extends StepEvent{
-
-            public CompleteEvent(Step source) {
-                super(source);
-            }
+        public CompleteEvent(Step source) {
+            super(source);
         }
     }
 
 
-    void addHideListener(StepHideListener listener);
+    void addHideListener(Consumer<HideEvent> consumer);
 
-    void removeHideListener(StepHideListener listener);
+    void removeHideListener(Consumer<HideEvent> consumer);
 
-    interface StepHideListener {
-        void onHide(HideEvent event);
+    class HideEvent extends StepEvent {
 
-        class HideEvent extends StepEvent {
-
-            public HideEvent(Step source) {
-                super(source);
-            }
+        public HideEvent(Step source) {
+            super(source);
         }
     }
 
-    void addShowListener(StepShowListener listener);
+    void addShowListener(Consumer<ShowEvent> consumer);
 
-    void removeShowListener(StepShowListener listener);
+    void removeShowListener(Consumer<ShowEvent> consumer);
 
-    interface StepShowListener {
-        void onShow(ShowEvent event);
+    class ShowEvent extends StepEvent {
 
-        class ShowEvent extends StepEvent {
+        public ShowEvent(Step source) {
+            super(source);
+        }
+    }
 
-            public ShowEvent(Step source) {
-                super(source);
-            }
+    class StepEvent extends EventObject implements TourProvider, StepProvider {
+
+        public StepEvent(Object source) {
+            super(source);
+        }
+
+        @Override
+        public Step getStep() {
+            return (Step) getSource();
+        }
+
+        @Override
+        public Tour getTour() {
+            Step step = getStep();
+            return step != null ? step.getTour() : null;
         }
     }
 

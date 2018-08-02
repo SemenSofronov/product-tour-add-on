@@ -5,16 +5,5 @@
 
 package com.company.scenarioaddon.web.gui.components;
 
-public class TourEvent implements TourProvider {
-
-    protected Object source;
-
-    public TourEvent(Object source) {
-        this.source = source;
-    }
-
-    @Override
-    public Tour getTour() {
-        return null;
-    }
+public interface TourState {
 }

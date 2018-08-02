@@ -5,34 +5,34 @@
 
 package com.company.scenarioaddon.web.gui.components;
 
-import org.vaadin.addons.producttour.actions.TourActions;
+import java.util.Optional;
 
-public class WebTourActions {
+public class TourActions {
 
     /**
      * Please use directly the static methods.
      */
-    private WebTourActions() {
+    private TourActions() {
         // Prevent instantiation
     }
 
     public static void back(com.company.scenarioaddon.web.gui.components.TourProvider provider) {
-        TourActions.back(() -> ((WebTour) provider.getTour()).getTour());
+        Optional.ofNullable(provider.getTour()).ifPresent(Tour::back);
     }
 
     public static void cancel(com.company.scenarioaddon.web.gui.components.TourProvider provider) {
-        TourActions.cancel(() -> ((WebTour) provider.getTour()).getTour());
+        Optional.ofNullable(provider.getTour()).ifPresent(Tour::cancel);
     }
 
     public static void hide(com.company.scenarioaddon.web.gui.components.TourProvider provider) {
-        TourActions.hide(() -> ((WebTour) provider.getTour()).getTour());
+        Optional.ofNullable(provider.getTour()).ifPresent(Tour::hide);
     }
 
     public static void next(com.company.scenarioaddon.web.gui.components.TourProvider provider) {
-        TourActions.next(() -> ((WebTour) provider.getTour()).getTour());
+        Optional.ofNullable(provider.getTour()).ifPresent(Tour::next);
     }
 
     public static void start(com.company.scenarioaddon.web.gui.components.TourProvider provider) {
-        TourActions.start(() -> ((WebTour) provider.getTour()).getTour());
+        Optional.ofNullable(provider.getTour()).ifPresent(Tour::start);
     }
 }

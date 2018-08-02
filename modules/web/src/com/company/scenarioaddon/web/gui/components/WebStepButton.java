@@ -9,26 +9,35 @@ import com.haulmont.cuba.gui.components.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class WebStepButton implements StepButton {
 
     protected org.vaadin.addons.producttour.button.StepButtonClickListener stepButtonClickListener;
     protected org.vaadin.addons.producttour.button.StepButton stepButton;
 
-    protected WebStep webStep;
+    protected Step step;
 
-    protected List<StepButtonClickListener> listenerList = null;
+    protected List<Consumer<ClickEvent>> consumerList = null;
 
-    public WebStepButton(String caption, String style, StepButtonClickListener stepButtonClickListener) {
+    public WebStepButton(String caption, String style, Consumer<ClickEvent> consumer) {
+        initWebStepButton(caption, style, consumer);
+    }
+
+    protected void initWebStepButton(String caption, String style, Consumer<ClickEvent> consumer) {
         stepButton = new org.vaadin.addons.producttour.button.StepButton(caption, style);
-
-        addStepButtonClickListener(stepButtonClickListener);
+        addStepButtonClickListener(consumer);
     }
 
     @Override
-    public void addStepButtonClickListener(StepButtonClickListener stepButtonClickListener) {
-        if (listenerList == null) {
-            listenerList = new ArrayList<>();
+    public <X> X getStepButton() {
+        return (X) stepButton;
+    }
+
+    @Override
+    public void addStepButtonClickListener(Consumer<ClickEvent> consumer) {
+        if (consumerList == null) {
+            consumerList = new ArrayList<>();
 
             this.stepButtonClickListener = (org.vaadin.addons.producttour.button.StepButtonClickListener) event -> {
                 Component.MouseEventDetails details = new Component.MouseEventDetails();
@@ -36,49 +45,43 @@ public class WebStepButton implements StepButton {
                 details.setClientY(event.getClientY());
                 details.setRelativeY(event.getRelativeY());
                 details.setRelativeX(event.getRelativeX());
-                StepButtonClickListener.ClickEvent e = new StepButtonClickListener.ClickEvent(WebStepButton.this, details) {
-                    @Override
-                    public Tour getTour() {
-                        return getStep().getTour();
-                    }
-                };
-                for (StepButtonClickListener buttonClickListener : listenerList) {
-                    buttonClickListener.onClick(e);
+                ClickEvent e = new ClickEvent(WebStepButton.this, details);
+                for (Consumer<ClickEvent> clickEventConsumer : consumerList) {
+                    clickEventConsumer.accept(e);
                 }
             };
             stepButton.addClickListener(this.stepButtonClickListener);
         }
 
-        if (!listenerList.contains(stepButtonClickListener)) {
-            listenerList.add(stepButtonClickListener);
+        if (!consumerList.contains(consumer)) {
+            consumerList.add(consumer);
         }
     }
 
     @Override
-    public void removeStepButtonClickListener(StepButtonClickListener stepButtonClickListener) {
-        listenerList.remove(stepButtonClickListener);
+    public void removeStepButtonClickListener(Consumer<ClickEvent> consumer) {
+        if (consumerList.contains(consumer)) {
+            consumerList.remove(consumer);
+        }
 
-        if (listenerList.isEmpty()) {
-            listenerList = null;
+        if (consumerList.isEmpty()) {
+            consumerList = null;
             stepButton.removeClickListener(this.stepButtonClickListener);
+            this.stepButtonClickListener = null;
         }
     }
 
-
-    public org.vaadin.addons.producttour.button.StepButton getStepButton() {
-        return stepButton;
-    }
 
     @Override
     public Step getStep() {
-        return webStep;
+        return step;
     }
 
     @Override
     public void setStep(Step step) {
         WebStep webStep = (WebStep) step;
         stepButton.setStep(webStep.getStep());
-        this.webStep = webStep;
+        this.step = webStep;
     }
 
     @Override

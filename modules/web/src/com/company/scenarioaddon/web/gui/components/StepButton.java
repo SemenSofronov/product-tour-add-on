@@ -2,11 +2,12 @@ package com.company.scenarioaddon.web.gui.components;
 
 import com.haulmont.cuba.gui.components.Component;
 
+import java.util.EventObject;
+import java.util.function.Consumer;
+
 public interface StepButton {
 
-    void addStepButtonClickListener(StepButtonClickListener stepButtonClickListener);
-
-    void removeStepButtonClickListener(StepButtonClickListener stepButtonClickListener);
+    <X> X getStepButton();
 
     Step getStep();
 
@@ -28,91 +29,41 @@ public interface StepButton {
 
     void setStyleName(String style);
 
+    void addStepButtonClickListener(Consumer<ClickEvent> consumer);
 
-    interface StepButtonClickListener {
-        void onClick(ClickEvent event);
+    void removeStepButtonClickListener(Consumer<ClickEvent> consumer);
 
-        abstract class ClickEvent implements TourProvider {
-            private final Component.MouseEventDetails details;
+    class ClickEvent extends EventObject implements TourProvider, StepProvider, StepButtonProvider {
+        protected Component.MouseEventDetails details;
 
-            protected StepButton source;
+        public ClickEvent(StepButton source) {
+            this(source, null);
+        }
 
-            public ClickEvent(StepButton source) {
-                this(source, null);
-            }
+        public ClickEvent(StepButton source, Component.MouseEventDetails details) {
+            super(source);
+            this.details = details;
+        }
 
-            public ClickEvent(StepButton source, Component.MouseEventDetails details) {
-                this.source = source;
-                this.details = details;
-            }
+        public Component.MouseEventDetails getDetails() {
+            return details;
+        }
 
-            public StepButton getSource() {
-                return source;
-            }
+        @Override
+        public Tour getTour() {
+            Step step = getStep();
+            return step != null ? step.getTour() : null;
+        }
 
-            public int getClientX() {
-                if (null != details) {
-                    return details.getClientX();
-                } else {
-                    return -1;
-                }
-            }
+        @Override
+        public Step getStep() {
+            StepButton button = getStepButton();
+            return button != null ? button.getStep() : null;
+        }
 
-            public int getClientY() {
-                if (null != details) {
-                    return details.getClientY();
-                } else {
-                    return -1;
-                }
-            }
-
-            public int getRelativeX() {
-                if (null != details) {
-                    return details.getRelativeX();
-                } else {
-                    return -1;
-                }
-            }
-
-            public int getRelativeY() {
-                if (null != details) {
-                    return details.getRelativeY();
-                } else {
-                    return -1;
-                }
-            }
-
-            public boolean isAltKey() {
-                if (null != details) {
-                    return details.isAltKey();
-                } else {
-                    return false;
-                }
-            }
-
-            public boolean isCtrlKey() {
-                if (null != details) {
-                    return details.isCtrlKey();
-                } else {
-                    return false;
-                }
-            }
-
-            public boolean isMetaKey() {
-                if (null != details) {
-                    return details.isMetaKey();
-                } else {
-                    return false;
-                }
-            }
-
-            public boolean isShiftKey() {
-                if (null != details) {
-                    return details.isShiftKey();
-                } else {
-                    return false;
-                }
-            }
+        @Override
+        public StepButton getStepButton() {
+            return (StepButton) getSource();
         }
     }
 }

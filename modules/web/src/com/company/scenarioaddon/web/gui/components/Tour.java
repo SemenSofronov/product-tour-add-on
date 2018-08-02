@@ -1,14 +1,20 @@
 package com.company.scenarioaddon.web.gui.components;
 
+import java.util.EventObject;
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface Tour {
+
+    <X> X getTour();
 
     void addStep(Step step);
 
     void removeStep(Step step);
 
     Step getCurrentStep();
+
+    TourState getState();
 
     void cancel();
 
@@ -24,93 +30,79 @@ public interface Tour {
 
     Step getStepById(String stepId);
 
+    Step getStepByIndex(int index);
+
     List<Step> getSteps();
 
-    void addShowListener(TourShowListener listener);
+    void addShowListener(Consumer<ShowEvent>  listener);
 
-    void removeShowListener(TourShowListener listener);
+    void removeShowListener(Consumer<ShowEvent>  listener);
 
-    interface TourShowListener {
-        void onShow(ShowEvent event);
+    class ShowEvent extends TourEvent {
 
-        class ShowEvent extends TourEvent {
+        private final Step previousStep;
+        private final Step currentStep;
 
-            private final Step previousStep;
-            private final Step currentStep;
-
-            public ShowEvent(Tour source, Step previousStep, Step currentStep) {
-                super(source);
-                this.previousStep = previousStep;
-                this.currentStep = currentStep;
-            }
-
-            public Step getPreviousStep() {
-                return previousStep;
-            }
-
-            public Step getCurrentStep() {
-                return currentStep;
-            }
+        public ShowEvent(Tour source, Step previousStep, Step currentStep) {
+            super(source);
+            this.previousStep = previousStep;
+            this.currentStep = currentStep;
         }
     }
 
-    void addCancelListener(TourCancelListener listener);
+    void addCancelListener(Consumer<CancelEvent> listener);
 
-    void removeCancelListener(TourCancelListener listener);
+    void removeCancelListener(Consumer<CancelEvent>  listener);
 
-    interface TourCancelListener {
-        void onCancel(CancelEvent event);
+    class CancelEvent extends TourEvent {
 
-        class CancelEvent extends TourEvent {
-
-            public CancelEvent(Tour source) {
-                super(source);
-            }
+        public CancelEvent(Tour source) {
+            super(source);
         }
     }
 
-    void addCompleteListener(TourCompleteListener listener);
+    void addCompleteListener(Consumer<CompleteEvent> listener);
 
-    void removeCompleteListener(TourCompleteListener listener);
+    void removeCompleteListener(Consumer<CompleteEvent>  listener);
 
-    interface TourCompleteListener {
-        void onComplete(CompleteEvent event);
+    class CompleteEvent extends TourEvent {
 
-        class CompleteEvent extends TourEvent {
-
-            public CompleteEvent(Tour source) {
-                super(source);
-            }
+        public CompleteEvent(Tour source) {
+            super(source);
         }
     }
 
-    void addHideListener(TourHideListener listener);
+    void addHideListener(Consumer<HideEvent>  listener);
 
-    void removeHideListener(TourHideListener listener);
+    void removeHideListener(Consumer<HideEvent>  listener);
 
-    interface TourHideListener {
-        void onHide(HideEvent event);
+    class HideEvent extends TourEvent {
 
-        class HideEvent extends TourEvent {
-
-            public HideEvent(Tour source) {
-                super(source);
-            }
+        public HideEvent(Tour source) {
+            super(source);
         }
     }
 
-    void addStartListener(TourStartListener listener);
+    void addStartListener(Consumer<StartEvent>  listener);
 
-    void removeStartListener(TourStartListener listener);
+    void removeStartListener(Consumer<StartEvent>  listener);
 
-    interface TourStartListener {
-        void onStart(StartEvent event);
+    class StartEvent extends TourEvent {
 
-        class StartEvent extends TourEvent {
+        public StartEvent(Tour source) {
+            super(source);
+        }
+    }
 
-            public StartEvent(Tour source) {
-                super(source);
-            }
+    class TourEvent extends EventObject implements TourProvider {
+
+        public TourEvent(Object source) {
+            super(source);
+        }
+
+        @Override
+        public Tour getTour() {
+            return (Tour) getSource();
         }
     }
 }
