@@ -6,15 +6,13 @@ import java.util.function.Consumer;
 
 public interface Tour {
 
-    <X> X getTour();
+    <X> X getTour(Class<X> internalClass);
 
     void addStep(Step step);
 
     void removeStep(Step step);
 
     Step getCurrentStep();
-
-    TourState getState();
 
     void cancel();
 

@@ -1,21 +1,20 @@
 package com.company.scenarioaddon.web.gui.components;
 
-import com.haulmont.cuba.gui.components.Action;
-import com.haulmont.cuba.gui.components.Component;
-import com.haulmont.cuba.gui.components.actions.BaseAction;
-
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class WebTour implements Tour {
-    protected org.vaadin.addons.producttour.tour.Tour tour;
+    protected org.vaadin.addons.producttour.tour.Tour tourExtension;
 
     protected List<Step> stepList = new ArrayList<>();
 
     protected List<Consumer<ShowEvent>> tourShowListeners = null;
     protected List<Consumer<CancelEvent>> tourCancelListeners = null;
-    protected List<Consumer<CompleteEvent> > tourCompleteListeners = null;
+    protected List<Consumer<CompleteEvent>> tourCompleteListeners = null;
     protected List<Consumer<StartEvent>> tourStartListeners = null;
     protected List<Consumer<HideEvent>> tourHideListeners = null;
 
@@ -30,61 +29,58 @@ public class WebTour implements Tour {
     }
 
     protected void initWebTour() {
-        tour = new org.vaadin.addons.producttour.tour.Tour();
+        tourExtension = new org.vaadin.addons.producttour.tour.Tour();
     }
 
     @Override
-    public <X> X getTour() {
-        return (X) tour;
+    public <X> X getTour(Class<X> internalClass) {
+        return internalClass.cast(tourExtension);
     }
 
     @Override
     public void addStep(Step step) {
-        step.setTour(this);
-        tour.addStep(step.getStep());
+        step.setTourExtended(this);
+        org.vaadin.addons.producttour.step.Step vaadinStep = step.getStep(org.vaadin.addons.producttour.step.Step.class);
+        tourExtension.addStep(vaadinStep);
         stepList.add(step);
     }
 
     @Override
     public void removeStep(Step step) {
-        tour.removeStep(step.getStep());
+        org.vaadin.addons.producttour.step.Step vaadinStep = step.getStep(org.vaadin.addons.producttour.step.Step.class);
+        tourExtension.removeStep(vaadinStep);
         stepList.remove(step);
     }
 
     @Override
     public Step getCurrentStep() {
-        org.vaadin.addons.producttour.step.Step currentStep = tour.getCurrentStep();
+        org.vaadin.addons.producttour.step.Step currentStep = tourExtension.getCurrentStep();
         return getStepByVaadinStep(currentStep);
     }
 
     @Override
-    public TourState getState() {
-        return null;
-    }
-
-    @Override
     public void cancel() {
-        tour.cancel();
+        tourExtension.cancel();
     }
 
     @Override
     public void start() {
-        tour.start();
+        tourExtension.start();
     }
 
     @Override
     public void hide() {
-        tour.hide();
+        tourExtension.hide();
     }
 
     @Override
     public void next() {
-        tour.next();
+        tourExtension.next();
     }
 
     @Override
     public void back() {
-        tour.back();
+        tourExtension.back();
     }
 
     @Override
@@ -114,7 +110,8 @@ public class WebTour implements Tour {
     @Nullable
     protected Step getStepByVaadinStep(org.vaadin.addons.producttour.step.Step vaadinStep) {
         for (Step step : getSteps()) {
-            if (step.getStep() == vaadinStep) {
+            org.vaadin.addons.producttour.step.Step internalVaadinStep = step.getStep(org.vaadin.addons.producttour.step.Step.class);
+            if (internalVaadinStep == vaadinStep) {
                 return step;
             }
         }
@@ -122,7 +119,7 @@ public class WebTour implements Tour {
     }
 
     @Override
-    public void addShowListener(Consumer<ShowEvent>  listener) {
+    public void addShowListener(Consumer<ShowEvent> listener) {
         if (tourShowListeners == null) {
             tourShowListeners = new ArrayList<>();
 
@@ -135,7 +132,7 @@ public class WebTour implements Tour {
                 }
             };
 
-            tour.addShowListener(this.tourShowListener);
+            tourExtension.addShowListener(this.tourShowListener);
 
         }
         if (!tourShowListeners.contains(listener)) {
@@ -145,14 +142,18 @@ public class WebTour implements Tour {
 
     @Override
     public void removeShowListener(Consumer<ShowEvent> listener) {
-        if (tourShowListeners.contains(listener)) {
-            tourShowListeners.remove(listener);
-        }
+        if (tourShowListeners != null) {
+            for (Consumer<ShowEvent> showEventConsumer : tourShowListeners) {
+                if (showEventConsumer == listener) {
+                    tourShowListeners.remove(listener);
+                }
+            }
 
-        if (tourShowListeners.isEmpty()) {
-            tourShowListeners = null;
-            tour.removeShowListener(this.tourShowListener);
-            this.tourShowListener = null;
+            if (tourShowListeners.isEmpty()) {
+                tourShowListeners = null;
+                tourExtension.removeShowListener(this.tourShowListener);
+                this.tourShowListener = null;
+            }
         }
     }
 
@@ -168,7 +169,7 @@ public class WebTour implements Tour {
                 }
             };
 
-            tour.addCancelListener(this.tourCancelListener);
+            tourExtension.addCancelListener(this.tourCancelListener);
 
         }
         if (!tourCancelListeners.contains(listener)) {
@@ -177,20 +178,24 @@ public class WebTour implements Tour {
     }
 
     @Override
-    public void removeCancelListener(Consumer<CancelEvent>  listener) {
-        if (tourCancelListeners.contains(listener)) {
-            tourCancelListeners.remove(listener);
-        }
+    public void removeCancelListener(Consumer<CancelEvent> listener) {
+        if (tourCancelListeners != null) {
+            for (Consumer<CancelEvent> cancelEventConsumer : tourCancelListeners) {
+                if (cancelEventConsumer == listener) {
+                    tourCancelListeners.remove(listener);
+                }
+            }
 
-        if (tourCancelListeners.isEmpty()) {
-            tourCancelListeners = null;
-            tour.removeCancelListener(this.tourCancelListener);
-            this.tourCancelListener = null;
+            if (tourCancelListeners.isEmpty()) {
+                tourCancelListeners = null;
+                tourExtension.removeCancelListener(this.tourCancelListener);
+                this.tourCancelListener = null;
+            }
         }
     }
 
     @Override
-    public void addCompleteListener(Consumer<CompleteEvent>  listener) {
+    public void addCompleteListener(Consumer<CompleteEvent> listener) {
         if (tourCompleteListeners == null) {
             tourCompleteListeners = new ArrayList<>();
 
@@ -201,7 +206,7 @@ public class WebTour implements Tour {
                 }
             };
 
-            tour.addCompleteListener(this.tourCompleteListener);
+            tourExtension.addCompleteListener(this.tourCompleteListener);
 
         }
         if (!tourCompleteListeners.contains(listener)) {
@@ -210,21 +215,24 @@ public class WebTour implements Tour {
     }
 
     @Override
-    public void removeCompleteListener(Consumer<CompleteEvent>  listener) {
-        if (tourCompleteListeners.contains(listener)) {
-            tourCompleteListeners.remove(listener);
-        }
+    public void removeCompleteListener(Consumer<CompleteEvent> listener) {
+        if (tourCompleteListeners != null) {
+            for (Consumer<CompleteEvent> completeEventConsumer : tourCompleteListeners) {
+                if (completeEventConsumer == listener) {
+                    tourCompleteListeners.remove(listener);
+                }
+            }
 
-
-        if (tourCompleteListeners.isEmpty()) {
-            tourCompleteListeners = null;
-            tour.removeCompleteListener(this.tourCompleteListener);
-            this.tourCompleteListener = null;
+            if (tourCompleteListeners.isEmpty()) {
+                tourCompleteListeners = null;
+                tourExtension.removeCompleteListener(this.tourCompleteListener);
+                this.tourCompleteListener = null;
+            }
         }
     }
 
     @Override
-    public void addHideListener(Consumer<HideEvent>  listener) {
+    public void addHideListener(Consumer<HideEvent> listener) {
         if (tourHideListeners == null) {
             tourHideListeners = new ArrayList<>();
 
@@ -235,7 +243,7 @@ public class WebTour implements Tour {
                 }
             };
 
-            tour.addHideListener(this.tourHideListener);
+            tourExtension.addHideListener(this.tourHideListener);
 
         }
         if (!tourHideListeners.contains(listener)) {
@@ -245,14 +253,18 @@ public class WebTour implements Tour {
 
     @Override
     public void removeHideListener(Consumer<HideEvent> listener) {
-        if (tourHideListeners.contains(listener)) {
-            tourHideListeners.remove(listener);
-        }
+        if (tourHideListeners != null) {
+            for (Consumer<HideEvent> hideEventConsumer : tourHideListeners) {
+                if (hideEventConsumer == listener) {
+                    tourHideListeners.remove(listener);
+                }
+            }
 
-        if (tourHideListeners.isEmpty()) {
-            tourHideListeners = null;
-            tour.removeHideListener(this.tourHideListener);
-            this.tourHideListener = null;
+            if (tourHideListeners.isEmpty()) {
+                tourHideListeners = null;
+                tourExtension.removeHideListener(this.tourHideListener);
+                this.tourHideListener = null;
+            }
         }
     }
 
@@ -268,7 +280,7 @@ public class WebTour implements Tour {
                 }
             };
 
-            tour.addStartListener(this.tourStartListener);
+            tourExtension.addStartListener(this.tourStartListener);
 
         }
         if (!tourStartListeners.contains(listener)) {
@@ -278,28 +290,18 @@ public class WebTour implements Tour {
 
     @Override
     public void removeStartListener(Consumer<StartEvent> listener) {
-        if (tourStartListeners.contains(listener)) {
-            tourStartListeners.remove(listener);
-        }
-
-        if (tourStartListeners.isEmpty()) {
-            tourStartListeners = null;
-            tour.removeStartListener(this.tourStartListener);
-            this.tourStartListener = null;
-        }
-    }
-
-    public Action startAction() {
-        return new BaseAction("startAction") {
-            @Override
-            public void actionPerform(Component component) {
-                if (getCurrentStep() != null) {
-                    cancel();
+        if (tourStartListeners != null) {
+            for (Consumer<StartEvent> startEventConsumer : tourStartListeners) {
+                if (startEventConsumer == listener) {
+                    tourStartListeners.remove(listener);
                 }
-                start();
             }
-        };
+
+            if (tourStartListeners.isEmpty()) {
+                tourStartListeners = null;
+                tourExtension.removeStartListener(this.tourStartListener);
+                this.tourStartListener = null;
+            }
+        }
     }
-
-
 }

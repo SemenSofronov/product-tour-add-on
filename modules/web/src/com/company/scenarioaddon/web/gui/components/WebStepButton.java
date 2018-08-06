@@ -14,30 +14,25 @@ import java.util.function.Consumer;
 public class WebStepButton implements StepButton {
 
     protected org.vaadin.addons.producttour.button.StepButtonClickListener stepButtonClickListener;
-    protected org.vaadin.addons.producttour.button.StepButton stepButton;
+    protected org.vaadin.addons.producttour.button.StepButton stepButtonExtension;
 
-    protected Step step;
+    protected Step stepExtended;
 
-    protected List<Consumer<ClickEvent>> consumerList = null;
+    protected List<Consumer<ClickEvent>> listenerList = null;
 
     public WebStepButton(String caption, String style, Consumer<ClickEvent> consumer) {
-        initWebStepButton(caption, style, consumer);
-    }
-
-    protected void initWebStepButton(String caption, String style, Consumer<ClickEvent> consumer) {
-        stepButton = new org.vaadin.addons.producttour.button.StepButton(caption, style);
+        createExtension(caption, style);
         addStepButtonClickListener(consumer);
     }
 
-    @Override
-    public <X> X getStepButton() {
-        return (X) stepButton;
+    protected void createExtension(String caption, String style) {
+        stepButtonExtension = new org.vaadin.addons.producttour.button.StepButton(caption, style);
     }
 
     @Override
     public void addStepButtonClickListener(Consumer<ClickEvent> consumer) {
-        if (consumerList == null) {
-            consumerList = new ArrayList<>();
+        if (listenerList == null) {
+            listenerList = new ArrayList<>();
 
             this.stepButtonClickListener = (org.vaadin.addons.producttour.button.StepButtonClickListener) event -> {
                 Component.MouseEventDetails details = new Component.MouseEventDetails();
@@ -46,81 +41,86 @@ public class WebStepButton implements StepButton {
                 details.setRelativeY(event.getRelativeY());
                 details.setRelativeX(event.getRelativeX());
                 ClickEvent e = new ClickEvent(WebStepButton.this, details);
-                for (Consumer<ClickEvent> clickEventConsumer : consumerList) {
+                for (Consumer<ClickEvent> clickEventConsumer : listenerList) {
                     clickEventConsumer.accept(e);
                 }
             };
-            stepButton.addClickListener(this.stepButtonClickListener);
+            stepButtonExtension.addClickListener(this.stepButtonClickListener);
         }
 
-        if (!consumerList.contains(consumer)) {
-            consumerList.add(consumer);
+        if (!listenerList.contains(consumer)) {
+            listenerList.add(consumer);
         }
     }
 
     @Override
     public void removeStepButtonClickListener(Consumer<ClickEvent> consumer) {
-        if (consumerList.contains(consumer)) {
-            consumerList.remove(consumer);
+        if (listenerList.contains(consumer)) {
+            listenerList.remove(consumer);
         }
 
-        if (consumerList.isEmpty()) {
-            consumerList = null;
-            stepButton.removeClickListener(this.stepButtonClickListener);
+        if (listenerList.isEmpty()) {
+            listenerList = null;
+            stepButtonExtension.removeClickListener(this.stepButtonClickListener);
             this.stepButtonClickListener = null;
         }
     }
 
 
     @Override
-    public Step getStep() {
-        return step;
+    public <X> X getStepButton(Class<X> internalClass) {
+        return internalClass.cast(stepButtonExtension);
     }
 
     @Override
-    public void setStep(Step step) {
-        WebStep webStep = (WebStep) step;
-        stepButton.setStep(webStep.getStep());
-        this.step = webStep;
+    public Step getStepExtended() {
+        return stepExtended;
+    }
+
+    @Override
+    public void setStepExtended(Step stepExtended) {
+        org.vaadin.addons.producttour.step.Step vaadinStep = stepExtended.getStep(org.vaadin.addons.producttour.step.Step.class);
+        stepButtonExtension.setStep(vaadinStep);
+        this.stepExtended = stepExtended;
     }
 
     @Override
     public String getCaption() {
-        return stepButton.getCaption();
+        return stepButtonExtension.getCaption();
     }
 
     @Override
     public void setCaption(String caption) {
-        stepButton.setCaption(caption);
+        stepButtonExtension.setCaption(caption);
     }
 
     @Override
     public boolean isEnabled() {
-        return stepButton.isEnabled();
+        return stepButtonExtension.isEnabled();
     }
 
     @Override
     public void setEnabled(boolean enabled) {
-        stepButton.setEnabled(enabled);
+        stepButtonExtension.setEnabled(enabled);
     }
 
     @Override
     public void addStyleName(String style) {
-        stepButton.addStyleName(style);
+        stepButtonExtension.addStyleName(style);
     }
 
     @Override
     public void removeStyleName(String style) {
-        stepButton.removeStyleName(style);
+        stepButtonExtension.removeStyleName(style);
     }
 
     @Override
     public String getStyleName() {
-        return stepButton.getStyleName();
+        return stepButtonExtension.getStyleName();
     }
 
     @Override
     public void setStyleName(String style) {
-        stepButton.setStyleName(style);
+        stepButtonExtension.setStyleName(style);
     }
 }

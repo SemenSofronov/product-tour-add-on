@@ -13,10 +13,10 @@ import java.util.function.Consumer;
 
 public interface Step {
 
-    <X> X getStep();
+    <X> X getStep(Class<X> internalClass);
 
-    void setTour(Tour tour);
-    Tour getTour();
+    void setTourExtended(Tour tourExtended);
+    Tour getTourExtended();
 
     void setSizeUndefined();
 
@@ -29,6 +29,17 @@ public interface Step {
     String getText();
 
     boolean isVisible();
+
+    void setWidth(String width);
+    float getWidth();
+
+    void setHeight(String height);
+    float getHeight();
+
+    int getHeightUnits();
+
+    int getWidthUnits();
+
 
     String getId();
 
@@ -135,19 +146,24 @@ public interface Step {
 
     class StepEvent extends EventObject implements TourProvider, StepProvider {
 
-        public StepEvent(Object source) {
+        public StepEvent(Step source) {
             super(source);
         }
 
         @Override
+        public Step getSource() {
+            return (Step) source;
+        }
+
+        @Override
         public Step getStep() {
-            return (Step) getSource();
+            return getSource();
         }
 
         @Override
         public Tour getTour() {
             Step step = getStep();
-            return step != null ? step.getTour() : null;
+            return step != null ? step.getTourExtended() : null;
         }
     }
 
