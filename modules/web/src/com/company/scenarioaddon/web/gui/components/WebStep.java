@@ -13,15 +13,14 @@ import com.vaadin.ui.AbstractComponent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 
 public class WebStep implements Step {
 
-    protected org.vaadin.addons.producttour.step.Step stepExtension;
+    protected org.vaadin.addons.producttour.step.Step extension;
 
-    protected Tour tourExtended;
+    protected Tour tour;
 
     protected List<StepButton> buttonList = new ArrayList<>();
 
@@ -38,132 +37,124 @@ public class WebStep implements Step {
     protected Component attachedTo;
 
     public WebStep(String id, com.haulmont.cuba.gui.components.Component attachTo, StepAnchor anchor) {
-        createExtension(id, attachTo, anchor);
-        setDefualtConfiguration();
-        attachedTo = attachTo;
+        extension = createExtension(id);
+        initExtension(attachTo, anchor);
     }
 
-    protected void setDefualtConfiguration() {
-        stepExtension.setSizeFull();
+    protected org.vaadin.addons.producttour.step.Step createExtension(String id) {
+        return new org.vaadin.addons.producttour.step.Step(id);
     }
 
-    protected void createExtension(String id, Component attachTo, StepAnchor anchor) {
-        AbstractComponent abstractComponent = null;
-        if (attachTo != null) {
-            abstractComponent = attachTo.unwrap(AbstractComponent.class);
-        }
+    protected void initExtension(Component attachTo, StepAnchor anchor) {
         org.vaadin.addons.producttour.shared.step.StepAnchor stepAnchor = org.vaadin.addons.producttour.shared.step.StepAnchor.RIGHT;
         if (anchor != null) {
             stepAnchor = toVaadinStepAnchor(anchor);
         }
-        if (id == null) {
-            id = UUID.randomUUID().toString();
+        extension.setAnchor(stepAnchor);
+        AbstractComponent abstractComponent = null;
+        if (attachTo != null) {
+            abstractComponent = attachTo.unwrap(AbstractComponent.class);
         }
-        stepExtension = new org.vaadin.addons.producttour.step.Step(id, abstractComponent, stepAnchor);
+        extension.setAttachedTo(abstractComponent);
+        extension.setSizeFull();
+        attachedTo = attachTo;
     }
 
     public WebStep(com.haulmont.cuba.gui.components.Component attachTo, StepAnchor anchor) {
-        createExtension(null, attachTo, anchor);
-        setDefualtConfiguration();
-        attachedTo = attachTo;
+        this(null, attachTo, anchor);
     }
 
     public WebStep(String id, com.haulmont.cuba.gui.components.Component attachTo) {
-        createExtension(id, attachTo, null);
-        setDefualtConfiguration();
-        attachedTo = attachTo;
+        this(id, attachTo, null);
     }
 
     public WebStep(com.haulmont.cuba.gui.components.Component attachTo) {
-        createExtension(null, attachTo, null);
-        setDefualtConfiguration();
-        attachedTo = attachTo;
+        this(null, attachTo, null);
     }
 
     public WebStep(String id) {
-        createExtension(id, null, null);
+        this(id, null, null);
     }
 
     public WebStep() {
-        createExtension(null, null, null);
-        setDefualtConfiguration();
+        this(null, null, null);
     }
 
     @Override
-    public Tour getTourExtended() {
-        return tourExtended;
+    public Tour getTour() {
+        return tour;
     }
 
     @Override
-    public <X> X getStep(Class<X> internalClass) {
-        return internalClass.cast(stepExtension);
+    public <X> X unwrap(Class<X> internalClass) {
+        return internalClass.cast(extension);
     }
 
     @Override
-    public void setTourExtended(Tour tourExtended) {
-        org.vaadin.addons.producttour.tour.Tour vaadinTour = tourExtended.getTour(org.vaadin.addons.producttour.tour.Tour.class);
-        stepExtension.setTour(vaadinTour);
-        this.tourExtended = tourExtended;
+    public void setTour(Tour tour) {
+        org.vaadin.addons.producttour.tour.Tour vaadinTour = tour.unwrap(org.vaadin.addons.producttour.tour.Tour.class);
+        extension.setTour(vaadinTour);
+        this.tour = tour;
     }
 
     @Override
     public void setTitle(String title) {
-        stepExtension.setTitle(title);
+        extension.setTitle(title);
     }
 
     @Override
     public String getTitle() {
-        return stepExtension.getTitle();
+        return extension.getTitle();
     }
 
     @Override
     public void setText(String text) {
-        stepExtension.setText(text);
+        extension.setText(text);
     }
 
     @Override
     public String getText() {
-        return stepExtension.getText();
+        return extension.getText();
     }
 
     @Override
     public void setSizeFull() {
-        stepExtension.setSizeFull();
+        extension.setSizeFull();
     }
 
     @Override
     public boolean isVisible() {
-        return stepExtension.isVisible();
+        return extension.isVisible();
     }
 
     @Override
     public void setWidth(String width) {
-        stepExtension.setWidth(width);
+        extension.setWidth(width);
     }
 
     @Override
     public float getWidth() {
-        return stepExtension.getWidth();
+        return extension.getWidth();
     }
 
     @Override
     public void setHeight(String height) {
-        stepExtension.setHeight(height);
+        extension.setHeight(height);
     }
 
     @Override
     public float getHeight() {
-        return stepExtension.getHeight();
+        return extension.getHeight();
     }
 
     @Override
     public int getHeightUnits() {
-        return WebAbstractComponent.UNIT_SYMBOLS.indexOf(stepExtension.getHeightUnits());
+        return WebAbstractComponent.UNIT_SYMBOLS.indexOf(extension.getHeightUnits());
     }
 
     @Override
     public int getWidthUnits() {
-        return WebAbstractComponent.UNIT_SYMBOLS.indexOf(stepExtension.getWidthUnits());
+        return WebAbstractComponent.UNIT_SYMBOLS.indexOf(extension.getWidthUnits());
     }
 
     @Override
@@ -183,7 +174,7 @@ public class WebStep implements Step {
 
     @Override
     public String getId() {
-        return stepExtension.getId();
+        return extension.getId();
     }
 
     @Override
@@ -195,119 +186,119 @@ public class WebStep implements Step {
     public void setAttachedTo(Component component) {
         attachedTo = component;
         AbstractComponent abstractComponent = component.unwrap(AbstractComponent.class);
-        stepExtension.setAttachedTo(abstractComponent);
+        extension.setAttachedTo(abstractComponent);
     }
 
     @Override
     public void setDetached() {
         attachedTo = null;
-        stepExtension.setDetached();
+        extension.setDetached();
     }
 
     @Override
     public void setCancellable(boolean cancellable) {
-        stepExtension.setCancellable(cancellable);
+        extension.setCancellable(cancellable);
     }
 
     @Override
     public boolean isCancellable() {
-        return stepExtension.isCancellable();
+        return extension.isCancellable();
     }
 
     @Override
     public void setModal(boolean modal) {
-        stepExtension.setModal(modal);
+        extension.setModal(modal);
     }
 
     @Override
     public boolean isModal() {
-        return stepExtension.isModal();
+        return extension.isModal();
     }
 
     @Override
     public void setScrollTo(boolean scrollTo) {
-        stepExtension.setScrollTo(scrollTo);
+        extension.setScrollTo(scrollTo);
     }
 
     @Override
     public boolean isScrollTo() {
-        return stepExtension.isScrollTo();
+        return extension.isScrollTo();
     }
 
     @Override
     public void setTextContentMode(ContentMode contentMode) {
-        stepExtension.setTextContentMode(toVaadinContentMode(contentMode));
+        extension.setTextContentMode(toVaadinContentMode(contentMode));
     }
 
     @Override
     public ContentMode getTextContentMode() {
-        return fromVaadinContentMode(stepExtension.getTextContentMode());
+        return fromVaadinContentMode(extension.getTextContentMode());
     }
 
     @Override
     public void setTitleContentMode(ContentMode contentMode) {
-        stepExtension.setTextContentMode(toVaadinContentMode(contentMode));
+        extension.setTextContentMode(toVaadinContentMode(contentMode));
     }
 
     @Override
     public ContentMode getTitleContentMode() {
-        return fromVaadinContentMode(stepExtension.getTitleContentMode());
+        return fromVaadinContentMode(extension.getTitleContentMode());
     }
 
     @Override
     public void setAnchor(StepAnchor anchor) {
-        stepExtension.setAnchor(toVaadinStepAnchor(anchor));
+        extension.setAnchor(toVaadinStepAnchor(anchor));
     }
 
     @Override
     public StepAnchor getAnchor() {
-        return fromVaadinStepAnchor(stepExtension.getAnchor());
+        return fromVaadinStepAnchor(extension.getAnchor());
     }
 
     @Override
     public void cancel() {
-        stepExtension.cancel();
+        extension.cancel();
     }
 
     @Override
     public void complete() {
-        stepExtension.complete();
+        extension.complete();
     }
 
     @Override
     public void hide() {
-        stepExtension.hide();
+        extension.hide();
     }
 
     @Override
     public void show() {
-        stepExtension.show();
+        extension.show();
     }
 
     @Override
     public void scrollTo() {
-        stepExtension.scrollTo();
+        extension.scrollTo();
     }
 
     @Override
     public void setSizeUndefined() {
-        stepExtension.setSizeUndefined();
+        extension.setSizeUndefined();
     }
 
     @Override
     public void addButton(StepButton button) {
-        button.setStepExtended(this);
+        button.setStep(this);
         buttonList.add(button);
-        org.vaadin.addons.producttour.button.StepButton vaadinStepButton = button.getStepButton(org.vaadin.addons.producttour.button.StepButton.class);
-        stepExtension.addButton(vaadinStepButton);
+        org.vaadin.addons.producttour.button.StepButton vaadinStepButton = button.unwrap(org.vaadin.addons.producttour.button.StepButton.class);
+        extension.addButton(vaadinStepButton);
     }
 
     @Override
     public void removeButton(StepButton button) {
-        button.setStepExtended(null);
+        button.setStep(null);
         buttonList.remove(button);
-        org.vaadin.addons.producttour.button.StepButton vaadinStepButton = button.getStepButton(org.vaadin.addons.producttour.button.StepButton.class);
-        stepExtension.removeButton(vaadinStepButton);
+        org.vaadin.addons.producttour.button.StepButton vaadinStepButton = button.unwrap(org.vaadin.addons.producttour.button.StepButton.class);
+        extension.removeButton(vaadinStepButton);
     }
 
     @Override
@@ -322,7 +313,7 @@ public class WebStep implements Step {
                 }
             };
 
-            stepExtension.addCancelListener(this.stepCancelListener);
+            extension.addCancelListener(this.stepCancelListener);
 
         }
         if (!stepCancelListeners.contains(consumer)) {
@@ -333,15 +324,11 @@ public class WebStep implements Step {
     @Override
     public void removeCancelListener(Consumer<CancelEvent> consumer) {
         if (stepCancelListeners != null) {
-            for (Consumer<CancelEvent> cancelEventConsumer : stepCancelListeners) {
-                if (cancelEventConsumer == consumer) {
-                    stepCancelListeners.remove(consumer);
-                }
-            }
+            stepCancelListeners.remove(consumer);
 
             if (stepCancelListeners.isEmpty()) {
                 stepCancelListeners = null;
-                stepExtension.removeCancelListener(this.stepCancelListener);
+                extension.removeCancelListener(this.stepCancelListener);
                 this.stepCancelListener = null;
             }
         }
@@ -359,7 +346,7 @@ public class WebStep implements Step {
                 }
             };
 
-            stepExtension.addCompleteListener(this.stepCompleteListener);
+            extension.addCompleteListener(this.stepCompleteListener);
 
         }
         if (!stepCompleteListeners.contains(consumer)) {
@@ -370,15 +357,11 @@ public class WebStep implements Step {
     @Override
     public void removeCompleteListener(Consumer<CompleteEvent> consumer) {
         if (stepCompleteListeners != null) {
-            for (Consumer<CompleteEvent> completeEventConsumer : stepCompleteListeners) {
-                if (completeEventConsumer == consumer) {
-                    stepCompleteListeners.remove(consumer);
-                }
-            }
+            stepCompleteListeners.remove(consumer);
 
             if (stepCompleteListeners.isEmpty()) {
                 stepCompleteListeners = null;
-                stepExtension.removeCompleteListener(this.stepCompleteListener);
+                extension.removeCompleteListener(this.stepCompleteListener);
                 this.stepCompleteListener = null;
             }
         }
@@ -396,7 +379,7 @@ public class WebStep implements Step {
                 }
             };
 
-            stepExtension.addHideListener(this.stepHideListener);
+            extension.addHideListener(this.stepHideListener);
 
         }
         if (!stepHideListeners.contains(consumer)) {
@@ -407,15 +390,11 @@ public class WebStep implements Step {
     @Override
     public void removeHideListener(Consumer<HideEvent> consumer) {
         if (stepHideListeners != null) {
-            for (Consumer<HideEvent> hideEventConsumer : stepHideListeners) {
-                if (hideEventConsumer == consumer) {
-                    stepHideListeners.remove(consumer);
-                }
-            }
+            stepHideListeners.remove(consumer);
 
             if (stepHideListeners.isEmpty()) {
                 stepHideListeners = null;
-                stepExtension.removeHideListener(this.stepHideListener);
+                extension.removeHideListener(this.stepHideListener);
                 this.stepHideListener = null;
             }
         }
@@ -433,7 +412,7 @@ public class WebStep implements Step {
                 }
             };
 
-            stepExtension.addShowListener(this.stepShowListener);
+            extension.addShowListener(this.stepShowListener);
 
         }
         if (!stepShowListeners.contains(consumer)) {
@@ -444,15 +423,11 @@ public class WebStep implements Step {
     @Override
     public void removeShowListener(Consumer<ShowEvent> consumer) {
         if (stepShowListeners != null) {
-            for (Consumer<ShowEvent> showEventConsumer : stepShowListeners) {
-                if (showEventConsumer == consumer) {
-                    stepShowListeners.remove(consumer);
-                }
-            }
+            stepShowListeners.remove(consumer);
 
             if (stepShowListeners.isEmpty()) {
                 stepShowListeners = null;
-                stepExtension.removeShowListener(this.stepShowListener);
+                extension.removeShowListener(this.stepShowListener);
                 this.stepShowListener = null;
             }
         }
@@ -471,7 +446,7 @@ public class WebStep implements Step {
             case LEFT:
                 return org.vaadin.addons.producttour.shared.step.StepAnchor.LEFT;
             default:
-                throw new IllegalArgumentException("Unknown stepExtension anchor: " + stepAnchor);
+                throw new IllegalArgumentException("Unknown extension anchor: " + stepAnchor);
         }
     }
 
@@ -488,7 +463,7 @@ public class WebStep implements Step {
             case LEFT:
                 return Step.StepAnchor.LEFT;
             default:
-                throw new IllegalArgumentException("Unknown stepExtension anchor: " + stepAnchor);
+                throw new IllegalArgumentException("Unknown extension anchor: " + stepAnchor);
         }
     }
 

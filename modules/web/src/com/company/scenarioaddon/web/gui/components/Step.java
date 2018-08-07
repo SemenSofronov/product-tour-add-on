@@ -13,10 +13,10 @@ import java.util.function.Consumer;
 
 public interface Step {
 
-    <X> X getStep(Class<X> internalClass);
+    <X> X unwrap(Class<X> internalClass);
 
-    void setTourExtended(Tour tourExtended);
-    Tour getTourExtended();
+    void setTour(Tour tour);
+    Tour getTour();
 
     void setSizeUndefined();
 
@@ -163,7 +163,7 @@ public interface Step {
         @Override
         public Tour getTour() {
             Step step = getStep();
-            return step != null ? step.getTourExtended() : null;
+            return step != null ? step.getTour() : null;
         }
     }
 

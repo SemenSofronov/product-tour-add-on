@@ -7,11 +7,11 @@ import java.util.function.Consumer;
 
 public interface StepButton {
 
-    <X> X getStepButton(Class<X> internalClass);
+    <X> X unwrap(Class<X> internalClass);
 
-    Step getStepExtended();
+    Step getStep();
 
-    void setStepExtended(Step stepExtended);
+    void setStep(Step step);
 
     String getCaption();
 
@@ -52,13 +52,13 @@ public interface StepButton {
         @Override
         public Tour getTour() {
             Step step = getStep();
-            return step != null ? step.getTourExtended() : null;
+            return step != null ? step.getTour() : null;
         }
 
         @Override
         public Step getStep() {
             StepButton button = getStepButton();
-            return button != null ? button.getStepExtended() : null;
+            return button != null ? button.getStep() : null;
         }
 
         @Override

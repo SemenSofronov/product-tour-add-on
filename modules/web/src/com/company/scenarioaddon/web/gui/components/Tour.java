@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 public interface Tour {
 
-    <X> X getTour(Class<X> internalClass);
+    <X> X unwrap(Class<X> internalClass);
 
     void addStep(Step step);
 

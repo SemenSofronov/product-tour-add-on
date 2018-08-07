@@ -14,20 +14,26 @@ import java.util.function.Consumer;
 public class WebStepButton implements StepButton {
 
     protected org.vaadin.addons.producttour.button.StepButtonClickListener stepButtonClickListener;
-    protected org.vaadin.addons.producttour.button.StepButton stepButtonExtension;
+    protected org.vaadin.addons.producttour.button.StepButton extension;
 
-    protected Step stepExtended;
+    protected Step step;
 
     protected List<Consumer<ClickEvent>> listenerList = null;
 
     public WebStepButton(String caption, String style, Consumer<ClickEvent> consumer) {
-        createExtension(caption, style);
+        extension = createExtension(caption);
+        initExtension(style, consumer);
+    }
+
+    protected org.vaadin.addons.producttour.button.StepButton createExtension(String caption) {
+        return new org.vaadin.addons.producttour.button.StepButton(caption);
+    }
+
+    protected void initExtension(String style, Consumer<ClickEvent> consumer) {
+        extension.setStyleName(style);
         addStepButtonClickListener(consumer);
     }
 
-    protected void createExtension(String caption, String style) {
-        stepButtonExtension = new org.vaadin.addons.producttour.button.StepButton(caption, style);
-    }
 
     @Override
     public void addStepButtonClickListener(Consumer<ClickEvent> consumer) {
@@ -45,7 +51,7 @@ public class WebStepButton implements StepButton {
                     clickEventConsumer.accept(e);
                 }
             };
-            stepButtonExtension.addClickListener(this.stepButtonClickListener);
+            extension.addClickListener(this.stepButtonClickListener);
         }
 
         if (!listenerList.contains(consumer)) {
@@ -55,72 +61,72 @@ public class WebStepButton implements StepButton {
 
     @Override
     public void removeStepButtonClickListener(Consumer<ClickEvent> consumer) {
-        if (listenerList.contains(consumer)) {
+        if (listenerList != null) {
             listenerList.remove(consumer);
+
+            if (listenerList.isEmpty()) {
+                listenerList = null;
+                extension.removeClickListener(this.stepButtonClickListener);
+                this.stepButtonClickListener = null;
+            }
         }
-
-        if (listenerList.isEmpty()) {
-            listenerList = null;
-            stepButtonExtension.removeClickListener(this.stepButtonClickListener);
-            this.stepButtonClickListener = null;
-        }
     }
 
 
     @Override
-    public <X> X getStepButton(Class<X> internalClass) {
-        return internalClass.cast(stepButtonExtension);
+    public <X> X unwrap(Class<X> internalClass) {
+        return internalClass.cast(extension);
     }
 
     @Override
-    public Step getStepExtended() {
-        return stepExtended;
+    public Step getStep() {
+        return step;
     }
 
     @Override
-    public void setStepExtended(Step stepExtended) {
-        org.vaadin.addons.producttour.step.Step vaadinStep = stepExtended.getStep(org.vaadin.addons.producttour.step.Step.class);
-        stepButtonExtension.setStep(vaadinStep);
-        this.stepExtended = stepExtended;
+    public void setStep(Step step) {
+        org.vaadin.addons.producttour.step.Step vaadinStep = step.unwrap(org.vaadin.addons.producttour.step.Step.class);
+        extension.setStep(vaadinStep);
+        this.step = step;
     }
 
     @Override
     public String getCaption() {
-        return stepButtonExtension.getCaption();
+        return extension.getCaption();
     }
 
     @Override
     public void setCaption(String caption) {
-        stepButtonExtension.setCaption(caption);
+        extension.setCaption(caption);
     }
 
     @Override
     public boolean isEnabled() {
-        return stepButtonExtension.isEnabled();
+        return extension.isEnabled();
     }
 
     @Override
     public void setEnabled(boolean enabled) {
-        stepButtonExtension.setEnabled(enabled);
+        extension.setEnabled(enabled);
     }
 
     @Override
     public void addStyleName(String style) {
-        stepButtonExtension.addStyleName(style);
+        extension.addStyleName(style);
     }
 
     @Override
     public void removeStyleName(String style) {
-        stepButtonExtension.removeStyleName(style);
+        extension.removeStyleName(style);
     }
 
     @Override
     public String getStyleName() {
-        return stepButtonExtension.getStyleName();
+        return extension.getStyleName();
     }
 
     @Override
     public void setStyleName(String style) {
-        stepButtonExtension.setStyleName(style);
+        extension.setStyleName(style);
     }
 }
