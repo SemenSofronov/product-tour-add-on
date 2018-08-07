@@ -13,6 +13,7 @@ import com.vaadin.ui.AbstractComponent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 
@@ -42,6 +43,9 @@ public class WebStep implements Step {
     }
 
     protected org.vaadin.addons.producttour.step.Step createExtension(String id) {
+        if (id == null) {
+            id = UUID.randomUUID().toString();
+        }
         return new org.vaadin.addons.producttour.step.Step(id);
     }
 
