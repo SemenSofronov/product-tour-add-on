@@ -20,20 +20,13 @@ public class WebStepButton implements StepButton {
 
     protected List<Consumer<ClickEvent>> listenerList = null;
 
-    public WebStepButton(String caption, String style, Consumer<ClickEvent> consumer) {
+    public WebStepButton(String caption) {
         extension = createExtension(caption);
-        initExtension(style, consumer);
     }
 
     protected org.vaadin.addons.producttour.button.StepButton createExtension(String caption) {
         return new org.vaadin.addons.producttour.button.StepButton(caption);
     }
-
-    protected void initExtension(String style, Consumer<ClickEvent> consumer) {
-        extension.setStyleName(style);
-        addStepButtonClickListener(consumer);
-    }
-
 
     @Override
     public void addStepButtonClickListener(Consumer<ClickEvent> consumer) {

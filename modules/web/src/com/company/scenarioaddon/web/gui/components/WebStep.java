@@ -13,7 +13,6 @@ import com.vaadin.ui.AbstractComponent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 
@@ -37,51 +36,18 @@ public class WebStep implements Step {
 
     protected Component attachedTo;
 
-    public WebStep(String id, com.haulmont.cuba.gui.components.Component attachTo, StepAnchor anchor) {
+    public WebStep(String id) {
         extension = createExtension(id);
-        initExtension(attachTo, anchor);
+        initExtension(extension);
     }
 
     protected org.vaadin.addons.producttour.step.Step createExtension(String id) {
-        if (id == null) {
-            id = UUID.randomUUID().toString();
-        }
+        Preconditions.checkNotNullArgument(id);
         return new org.vaadin.addons.producttour.step.Step(id);
     }
 
-    protected void initExtension(Component attachTo, StepAnchor anchor) {
-        org.vaadin.addons.producttour.shared.step.StepAnchor stepAnchor = org.vaadin.addons.producttour.shared.step.StepAnchor.RIGHT;
-        if (anchor != null) {
-            stepAnchor = toVaadinStepAnchor(anchor);
-        }
-        extension.setAnchor(stepAnchor);
-        AbstractComponent abstractComponent = null;
-        if (attachTo != null) {
-            abstractComponent = attachTo.unwrap(AbstractComponent.class);
-        }
-        extension.setAttachedTo(abstractComponent);
+    protected void initExtension(org.vaadin.addons.producttour.step.Step extension) {
         extension.setSizeFull();
-        attachedTo = attachTo;
-    }
-
-    public WebStep(com.haulmont.cuba.gui.components.Component attachTo, StepAnchor anchor) {
-        this(null, attachTo, anchor);
-    }
-
-    public WebStep(String id, com.haulmont.cuba.gui.components.Component attachTo) {
-        this(id, attachTo, null);
-    }
-
-    public WebStep(com.haulmont.cuba.gui.components.Component attachTo) {
-        this(null, attachTo, null);
-    }
-
-    public WebStep(String id) {
-        this(id, null, null);
-    }
-
-    public WebStep() {
-        this(null, null, null);
     }
 
     @Override

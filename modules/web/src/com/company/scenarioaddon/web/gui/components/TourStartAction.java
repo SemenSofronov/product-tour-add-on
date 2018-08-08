@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 @Scope("prototype")
 public class TourStartAction extends BaseAction {
 
-    public static final String ACTION_ID = "start";
+    public static final String ACTION_ID = "tourStart";
 
     protected Tour tour;
 
@@ -37,8 +37,6 @@ public class TourStartAction extends BaseAction {
         super(id, shortcut);
         this.tour = tour;
     }
-
-
 
     @Override
     public void actionPerform(Component component) {
