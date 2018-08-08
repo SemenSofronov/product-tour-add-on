@@ -119,7 +119,7 @@ public class WebTour implements Tour {
     }
 
     @Override
-    public void addShowListener(Consumer<ShowEvent> listener) {
+    public void addShowListener(Consumer<ShowEvent> showListener) {
         if (tourShowListeners == null) {
             tourShowListeners = new ArrayList<>();
 
@@ -135,15 +135,15 @@ public class WebTour implements Tour {
             extension.addShowListener(this.tourShowListener);
 
         }
-        if (!tourShowListeners.contains(listener)) {
-            tourShowListeners.add(listener);
+        if (!tourShowListeners.contains(showListener)) {
+            tourShowListeners.add(showListener);
         }
     }
 
     @Override
-    public void removeShowListener(Consumer<ShowEvent> listener) {
+    public void removeShowListener(Consumer<ShowEvent> showListener) {
         if (tourShowListeners != null) {
-            tourShowListeners.remove(listener);
+            tourShowListeners.remove(showListener);
 
             if (tourShowListeners.isEmpty()) {
                 tourShowListeners = null;
@@ -154,7 +154,7 @@ public class WebTour implements Tour {
     }
 
     @Override
-    public void addCancelListener(Consumer<CancelEvent> listener) {
+    public void addCancelListener(Consumer<CancelEvent> cancelListener) {
         if (tourCancelListeners == null) {
             tourCancelListeners = new ArrayList<>();
 
@@ -168,15 +168,15 @@ public class WebTour implements Tour {
             extension.addCancelListener(this.tourCancelListener);
 
         }
-        if (!tourCancelListeners.contains(listener)) {
-            tourCancelListeners.add(listener);
+        if (!tourCancelListeners.contains(cancelListener)) {
+            tourCancelListeners.add(cancelListener);
         }
     }
 
     @Override
-    public void removeCancelListener(Consumer<CancelEvent> listener) {
+    public void removeCancelListener(Consumer<CancelEvent> cancelListener) {
         if (tourCancelListeners != null) {
-            tourCancelListeners.remove(listener);
+            tourCancelListeners.remove(cancelListener);
 
             if (tourCancelListeners.isEmpty()) {
                 tourCancelListeners = null;
@@ -187,7 +187,7 @@ public class WebTour implements Tour {
     }
 
     @Override
-    public void addCompleteListener(Consumer<CompleteEvent> listener) {
+    public void addCompleteListener(Consumer<CompleteEvent> completeListener) {
         if (tourCompleteListeners == null) {
             tourCompleteListeners = new ArrayList<>();
 
@@ -201,15 +201,15 @@ public class WebTour implements Tour {
             extension.addCompleteListener(this.tourCompleteListener);
 
         }
-        if (!tourCompleteListeners.contains(listener)) {
-            tourCompleteListeners.add(listener);
+        if (!tourCompleteListeners.contains(completeListener)) {
+            tourCompleteListeners.add(completeListener);
         }
     }
 
     @Override
-    public void removeCompleteListener(Consumer<CompleteEvent> listener) {
+    public void removeCompleteListener(Consumer<CompleteEvent> completeListener) {
         if (tourCompleteListeners != null) {
-            tourCompleteListeners.remove(listener);
+            tourCompleteListeners.remove(completeListener);
 
             if (tourCompleteListeners.isEmpty()) {
                 tourCompleteListeners = null;
@@ -220,7 +220,7 @@ public class WebTour implements Tour {
     }
 
     @Override
-    public void addHideListener(Consumer<HideEvent> listener) {
+    public void addHideListener(Consumer<HideEvent> hideListener) {
         if (tourHideListeners == null) {
             tourHideListeners = new ArrayList<>();
 
@@ -234,15 +234,15 @@ public class WebTour implements Tour {
             extension.addHideListener(this.tourHideListener);
 
         }
-        if (!tourHideListeners.contains(listener)) {
-            tourHideListeners.add(listener);
+        if (!tourHideListeners.contains(hideListener)) {
+            tourHideListeners.add(hideListener);
         }
     }
 
     @Override
-    public void removeHideListener(Consumer<HideEvent> listener) {
+    public void removeHideListener(Consumer<HideEvent> hideListener) {
         if (tourHideListeners != null) {
-            tourHideListeners.remove(listener);
+            tourHideListeners.remove(hideListener);
 
             if (tourHideListeners.isEmpty()) {
                 tourHideListeners = null;
@@ -253,7 +253,7 @@ public class WebTour implements Tour {
     }
 
     @Override
-    public void addStartListener(Consumer<StartEvent> listener) {
+    public void addStartListener(Consumer<StartEvent> startListener) {
         if (tourStartListeners == null) {
             tourStartListeners = new ArrayList<>();
 
@@ -267,15 +267,15 @@ public class WebTour implements Tour {
             extension.addStartListener(this.tourStartListener);
 
         }
-        if (!tourStartListeners.contains(listener)) {
-            tourStartListeners.add(listener);
+        if (!tourStartListeners.contains(startListener)) {
+            tourStartListeners.add(startListener);
         }
     }
 
     @Override
-    public void removeStartListener(Consumer<StartEvent> listener) {
+    public void removeStartListener(Consumer<StartEvent> startListener) {
         if (tourStartListeners != null) {
-            tourStartListeners.remove(listener);
+            tourStartListeners.remove(startListener);
 
             if (tourStartListeners.isEmpty()) {
                 tourStartListeners = null;

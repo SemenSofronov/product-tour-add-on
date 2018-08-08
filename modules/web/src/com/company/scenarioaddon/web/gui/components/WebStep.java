@@ -37,12 +37,12 @@ public class WebStep implements Step {
     protected Component attachedTo;
 
     public WebStep(String id) {
+        Preconditions.checkNotNullArgument(id);
         extension = createExtension(id);
         initExtension(extension);
     }
 
     protected org.vaadin.addons.producttour.step.Step createExtension(String id) {
-        Preconditions.checkNotNullArgument(id);
         return new org.vaadin.addons.producttour.step.Step(id);
     }
 
@@ -272,7 +272,7 @@ public class WebStep implements Step {
     }
 
     @Override
-    public void addCancelListener(Consumer<CancelEvent> consumer) {
+    public void addCancelListener(Consumer<CancelEvent> cancelListener) {
         if (stepCancelListeners == null) {
             stepCancelListeners = new ArrayList<>();
 
@@ -286,15 +286,15 @@ public class WebStep implements Step {
             extension.addCancelListener(this.stepCancelListener);
 
         }
-        if (!stepCancelListeners.contains(consumer)) {
-            stepCancelListeners.add(consumer);
+        if (!stepCancelListeners.contains(cancelListener)) {
+            stepCancelListeners.add(cancelListener);
         }
     }
 
     @Override
-    public void removeCancelListener(Consumer<CancelEvent> consumer) {
+    public void removeCancelListener(Consumer<CancelEvent> cancelListener) {
         if (stepCancelListeners != null) {
-            stepCancelListeners.remove(consumer);
+            stepCancelListeners.remove(cancelListener);
 
             if (stepCancelListeners.isEmpty()) {
                 stepCancelListeners = null;
@@ -305,7 +305,7 @@ public class WebStep implements Step {
     }
 
     @Override
-    public void addCompleteListener(Consumer<CompleteEvent> consumer) {
+    public void addCompleteListener(Consumer<CompleteEvent> completeListener) {
         if (stepCompleteListeners == null) {
             stepCompleteListeners = new ArrayList<>();
 
@@ -319,15 +319,15 @@ public class WebStep implements Step {
             extension.addCompleteListener(this.stepCompleteListener);
 
         }
-        if (!stepCompleteListeners.contains(consumer)) {
-            stepCompleteListeners.add(consumer);
+        if (!stepCompleteListeners.contains(completeListener)) {
+            stepCompleteListeners.add(completeListener);
         }
     }
 
     @Override
-    public void removeCompleteListener(Consumer<CompleteEvent> consumer) {
+    public void removeCompleteListener(Consumer<CompleteEvent> completeListener) {
         if (stepCompleteListeners != null) {
-            stepCompleteListeners.remove(consumer);
+            stepCompleteListeners.remove(completeListener);
 
             if (stepCompleteListeners.isEmpty()) {
                 stepCompleteListeners = null;
@@ -338,7 +338,7 @@ public class WebStep implements Step {
     }
 
     @Override
-    public void addHideListener(Consumer<HideEvent> consumer) {
+    public void addHideListener(Consumer<HideEvent> hideListener) {
         if (stepHideListeners == null) {
             stepHideListeners = new ArrayList<>();
 
@@ -352,15 +352,15 @@ public class WebStep implements Step {
             extension.addHideListener(this.stepHideListener);
 
         }
-        if (!stepHideListeners.contains(consumer)) {
-            stepHideListeners.add(consumer);
+        if (!stepHideListeners.contains(hideListener)) {
+            stepHideListeners.add(hideListener);
         }
     }
 
     @Override
-    public void removeHideListener(Consumer<HideEvent> consumer) {
+    public void removeHideListener(Consumer<HideEvent> hideListener) {
         if (stepHideListeners != null) {
-            stepHideListeners.remove(consumer);
+            stepHideListeners.remove(hideListener);
 
             if (stepHideListeners.isEmpty()) {
                 stepHideListeners = null;
@@ -371,7 +371,7 @@ public class WebStep implements Step {
     }
 
     @Override
-    public void addShowListener(Consumer<ShowEvent> consumer) {
+    public void addShowListener(Consumer<ShowEvent> showListener) {
         if (stepShowListeners == null) {
             stepShowListeners = new ArrayList<>();
 
@@ -385,15 +385,15 @@ public class WebStep implements Step {
             extension.addShowListener(this.stepShowListener);
 
         }
-        if (!stepShowListeners.contains(consumer)) {
-            stepShowListeners.add(consumer);
+        if (!stepShowListeners.contains(showListener)) {
+            stepShowListeners.add(showListener);
         }
     }
 
     @Override
-    public void removeShowListener(Consumer<ShowEvent> consumer) {
+    public void removeShowListener(Consumer<ShowEvent> showListener) {
         if (stepShowListeners != null) {
-            stepShowListeners.remove(consumer);
+            stepShowListeners.remove(showListener);
 
             if (stepShowListeners.isEmpty()) {
                 stepShowListeners = null;

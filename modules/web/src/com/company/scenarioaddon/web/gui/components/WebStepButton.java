@@ -29,7 +29,7 @@ public class WebStepButton implements StepButton {
     }
 
     @Override
-    public void addStepButtonClickListener(Consumer<ClickEvent> consumer) {
+    public void addStepButtonClickListener(Consumer<ClickEvent> clickListener) {
         if (listenerList == null) {
             listenerList = new ArrayList<>();
 
@@ -47,15 +47,15 @@ public class WebStepButton implements StepButton {
             extension.addClickListener(this.stepButtonClickListener);
         }
 
-        if (!listenerList.contains(consumer)) {
-            listenerList.add(consumer);
+        if (!listenerList.contains(clickListener)) {
+            listenerList.add(clickListener);
         }
     }
 
     @Override
-    public void removeStepButtonClickListener(Consumer<ClickEvent> consumer) {
+    public void removeStepButtonClickListener(Consumer<ClickEvent> clickListener) {
         if (listenerList != null) {
-            listenerList.remove(consumer);
+            listenerList.remove(clickListener);
 
             if (listenerList.isEmpty()) {
                 listenerList = null;

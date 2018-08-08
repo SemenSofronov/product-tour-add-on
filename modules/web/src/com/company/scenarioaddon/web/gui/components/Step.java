@@ -100,9 +100,9 @@ public interface Step {
         HTML
     }
 
-    void addCancelListener(Consumer<CancelEvent> consumer);
+    void addCancelListener(Consumer<CancelEvent> listener);
 
-    void removeCancelListener(Consumer<CancelEvent> consumer);
+    void removeCancelListener(Consumer<CancelEvent> listener);
 
     class CancelEvent extends StepEvent {
 
@@ -110,9 +110,9 @@ public interface Step {
 
     }
 
-    void addCompleteListener(Consumer<CompleteEvent> consumer);
+    void addCompleteListener(Consumer<CompleteEvent> listener);
 
-    void removeCompleteListener(Consumer<CompleteEvent> consumer);
+    void removeCompleteListener(Consumer<CompleteEvent> listener);
 
     class CompleteEvent extends StepEvent{
 
@@ -122,9 +122,9 @@ public interface Step {
     }
 
 
-    void addHideListener(Consumer<HideEvent> consumer);
+    void addHideListener(Consumer<HideEvent> listener);
 
-    void removeHideListener(Consumer<HideEvent> consumer);
+    void removeHideListener(Consumer<HideEvent> listener);
 
     class HideEvent extends StepEvent {
 
@@ -133,9 +133,9 @@ public interface Step {
         }
     }
 
-    void addShowListener(Consumer<ShowEvent> consumer);
+    void addShowListener(Consumer<ShowEvent> listener);
 
-    void removeShowListener(Consumer<ShowEvent> consumer);
+    void removeShowListener(Consumer<ShowEvent> listener);
 
     class ShowEvent extends StepEvent {
 

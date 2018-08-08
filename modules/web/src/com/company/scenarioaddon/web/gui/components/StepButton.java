@@ -29,9 +29,9 @@ public interface StepButton {
 
     void setStyleName(String style);
 
-    void addStepButtonClickListener(Consumer<ClickEvent> consumer);
+    void addStepButtonClickListener(Consumer<ClickEvent> listener);
 
-    void removeStepButtonClickListener(Consumer<ClickEvent> consumer);
+    void removeStepButtonClickListener(Consumer<ClickEvent> listener);
 
     class ClickEvent extends EventObject implements TourProvider, StepProvider, StepButtonProvider {
         protected Component.MouseEventDetails details;
