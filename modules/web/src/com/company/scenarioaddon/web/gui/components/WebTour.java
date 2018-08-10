@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class WebTour implements Tour {
-    protected org.vaadin.addons.producttour.tour.Tour extension;
+public class WebTour extends WebAbstractExtension<org.vaadin.addons.producttour.tour.Tour> implements Tour {
 
     protected List<Step> stepList = new ArrayList<>();
 
@@ -25,17 +24,16 @@ public class WebTour implements Tour {
     protected org.vaadin.addons.producttour.tour.TourHideListener tourHideListener;
 
     public WebTour() {
-        extension = createExtension();
+        extension = createExtension(null);
     }
 
-    protected org.vaadin.addons.producttour.tour.Tour createExtension() {
+    @Override
+    protected org.vaadin.addons.producttour.tour.Tour createExtension(@Nullable String attribute) {
         return new org.vaadin.addons.producttour.tour.Tour();
     }
 
     @Override
-    public <X> X unwrap(Class<X> internalClass) {
-        return internalClass.cast(extension);
-    }
+    protected void initExtension(org.vaadin.addons.producttour.tour.Tour extension) { }
 
     @Override
     public void addStep(Step step) {

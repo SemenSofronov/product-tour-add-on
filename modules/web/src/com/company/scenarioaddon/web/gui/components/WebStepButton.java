@@ -5,28 +5,33 @@
 
 package com.company.scenarioaddon.web.gui.components;
 
+import com.haulmont.bali.util.Preconditions;
 import com.haulmont.cuba.gui.components.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class WebStepButton implements StepButton {
+public class WebStepButton extends WebAbstractExtension<org.vaadin.addons.producttour.button.StepButton> implements StepButton {
 
     protected org.vaadin.addons.producttour.button.StepButtonClickListener stepButtonClickListener;
-    protected org.vaadin.addons.producttour.button.StepButton extension;
 
     protected Step step;
 
     protected List<Consumer<ClickEvent>> listenerList = null;
 
     public WebStepButton(String caption) {
+        Preconditions.checkNotNullArgument(caption);
         extension = createExtension(caption);
     }
 
+    @Override
     protected org.vaadin.addons.producttour.button.StepButton createExtension(String caption) {
         return new org.vaadin.addons.producttour.button.StepButton(caption);
     }
+
+    @Override
+    protected void initExtension(org.vaadin.addons.producttour.button.StepButton extension) { }
 
     @Override
     public void addStepButtonClickListener(Consumer<ClickEvent> clickListener) {
@@ -63,12 +68,6 @@ public class WebStepButton implements StepButton {
                 this.stepButtonClickListener = null;
             }
         }
-    }
-
-
-    @Override
-    public <X> X unwrap(Class<X> internalClass) {
-        return internalClass.cast(extension);
     }
 
     @Override

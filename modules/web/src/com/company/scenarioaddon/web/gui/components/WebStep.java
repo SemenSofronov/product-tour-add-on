@@ -13,12 +13,11 @@ import com.vaadin.ui.AbstractComponent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 
-public class WebStep implements Step {
-
-    protected org.vaadin.addons.producttour.step.Step extension;
+public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.step.Step> implements Step {
 
     protected Tour tour;
 
@@ -42,10 +41,12 @@ public class WebStep implements Step {
         initExtension(extension);
     }
 
+    @Override
     protected org.vaadin.addons.producttour.step.Step createExtension(String id) {
         return new org.vaadin.addons.producttour.step.Step(id);
     }
 
+    @Override
     protected void initExtension(org.vaadin.addons.producttour.step.Step extension) {
         extension.setSizeFull();
     }
@@ -53,11 +54,6 @@ public class WebStep implements Step {
     @Override
     public Tour getTour() {
         return tour;
-    }
-
-    @Override
-    public <X> X unwrap(Class<X> internalClass) {
-        return internalClass.cast(extension);
     }
 
     @Override
