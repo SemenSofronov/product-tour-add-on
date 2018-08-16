@@ -40,7 +40,6 @@ public interface Step {
 
     int getWidthUnits();
 
-
     String getId();
 
     Component getAttachedTo();
