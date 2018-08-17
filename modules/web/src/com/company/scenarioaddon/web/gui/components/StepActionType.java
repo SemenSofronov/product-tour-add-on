@@ -1,7 +1,6 @@
 package com.company.scenarioaddon.web.gui.components;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 
 public enum StepActionType {
 

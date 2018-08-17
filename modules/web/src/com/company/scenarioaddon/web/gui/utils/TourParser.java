@@ -21,6 +21,8 @@ public class TourParser {
 
     protected static Gson gson = new Gson();
 
+    protected ArrayList steps;
+
     protected static final Map<String, Step.ContentMode> contentModeMap =
             ImmutableMap.<String, Step.ContentMode>builder()
                     .put("HTML", Step.ContentMode.HTML)
@@ -56,14 +58,14 @@ public class TourParser {
         this.messages = messages;
 
         Tour tour = new WebTour();
+        setSteps(json);
 
-        ArrayList steps = gson.fromJson(json, ArrayList.class);
         for (Object step : steps) {
 
             LinkedTreeMap stepMap = (LinkedTreeMap) step;
             Step webStep = loadStep(stepMap);
 
-            ArrayList buttons = (ArrayList) stepMap.get("buttons");
+            ArrayList buttons = getButtons(stepMap);
             for (Object button : buttons) {
                 StepButton stepButton = loadStepButton(button);
                 webStep.addButton(stepButton);
@@ -74,18 +76,30 @@ public class TourParser {
         return tour;
     }
 
+    public void setSteps(String json) {
+        steps = gson.fromJson(json, ArrayList.class);
+    }
+
+    public ArrayList getSteps() {
+        return steps;
+    }
+
+    public ArrayList getButtons(LinkedTreeMap stepMap) {
+        return (ArrayList) stepMap.get("buttons");
+    }
+
     protected Step loadStep(LinkedTreeMap stepMap) {
 
-        String id = stepMap.get("id").toString();
-        String text = (String) stepMap.get("text");
-        String title = (String) stepMap.get("title");
-        String width = (String) stepMap.get("width");
-        String height = (String) stepMap.get("height");
-        String textContentMode = (String) stepMap.get("textContentMode");
-        String titleContentMode = (String) stepMap.get("titleContentMode");
-        String cancellable = (String) stepMap.get("cancellable");
-        String modal = (String) stepMap.get("modal");
-        String scrollTo = (String) stepMap.get("scrollTo");
+        String id = getId(stepMap);
+        String text = getText(stepMap);
+        String title = getTitle(stepMap);
+        String width = getWidth(stepMap);
+        String height = getHeight(stepMap);
+        String textContentMode = getTextContentMode(stepMap);
+        String titleContentMode = getTitleContentMode(stepMap);
+        String cancellable = getCancellable(stepMap);
+        String modal = getModal(stepMap);
+        String scrollTo = getScrollTo(stepMap);
 
         String localedText = messages.getMessage(messagePack, text);
         String localedTitle = messages.getMessage(messagePack, title);
@@ -111,13 +125,53 @@ public class TourParser {
         return webStep;
     }
 
+    public String getScrollTo(LinkedTreeMap stepMap) {
+        return (String) stepMap.get("scrollTo");
+    }
+
+    public String getModal(LinkedTreeMap stepMap) {
+        return (String) stepMap.get("modal");
+    }
+
+    public String getCancellable(LinkedTreeMap stepMap) {
+        return (String) stepMap.get("cancellable");
+    }
+
+    public String getTitleContentMode(LinkedTreeMap stepMap) {
+        return (String) stepMap.get("titleContentMode");
+    }
+
+    public String getTextContentMode(LinkedTreeMap stepMap) {
+        return (String) stepMap.get("textContentMode");
+    }
+
+    public String getHeight(LinkedTreeMap stepMap) {
+        return (String) stepMap.get("height");
+    }
+
+    public String getWidth(LinkedTreeMap stepMap) {
+        return (String) stepMap.get("width");
+    }
+
+    public String getTitle(LinkedTreeMap stepMap) {
+        return (String) stepMap.get("title");
+    }
+
+    public String getText(LinkedTreeMap stepMap) {
+        return (String) stepMap.get("text");
+    }
+
+    public String getId(LinkedTreeMap stepMap) {
+        return stepMap.get("id").toString();
+    }
+
     protected StepButton loadStepButton(Object button) {
         LinkedTreeMap buttonMap = (LinkedTreeMap) button;
 
-        String caption = (String) buttonMap.get("caption");
-        String style = (String) buttonMap.get("style");
-        String action = (String) buttonMap.get("action");
-        String enabled = (String) buttonMap.get("enabled");
+        String caption = getCaption(buttonMap);
+        String style = getStyle(buttonMap);
+        String action = getAction(buttonMap);
+        String enabled = getEnabled(buttonMap);
 
         String localedCaption = messages.getMessage(messagePack, caption);
 
@@ -133,7 +187,23 @@ public class TourParser {
         return stepButton;
     }
 
-    protected Step.ContentMode getContentMode(String contentMode) {
+    public String getEnabled(LinkedTreeMap buttonMap) {
+        return (String) buttonMap.get("enabled");
+    }
+
+    public String getAction(LinkedTreeMap buttonMap) {
+        return (String) buttonMap.get("action");
+    }
+
+    public String getStyle(LinkedTreeMap buttonMap) {
+        return (String) buttonMap.get("style");
+    }
+
+    public String getCaption(LinkedTreeMap buttonMap) {
+        return (String) buttonMap.get("caption");
+    }
+
+    public Step.ContentMode getContentMode(String contentMode) {
         if (contentModeMap.containsKey(contentMode)) {
             return contentModeMap.get(contentMode);
         } else {
@@ -141,7 +211,7 @@ public class TourParser {
         }
     }
 
-    protected Consumer<StepButton.ClickEvent> getClickListener(String action) {
+    public Consumer<StepButton.ClickEvent> getClickListener(String action) {
         String[] split = action.split(":");
 
         if (split.length == 2) {
