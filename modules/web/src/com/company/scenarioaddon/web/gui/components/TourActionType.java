@@ -5,8 +5,12 @@
 
 package com.company.scenarioaddon.web.gui.components;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
+/**
+ * Enumerates standard tour action types. Can create a corresponding action instance with default parameters.
+ */
 public enum TourActionType {
 
     BACK("back") {
@@ -52,6 +56,18 @@ public enum TourActionType {
 
     public String getId() {
         return id;
+    }
+
+    @Nullable
+    public static TourActionType fromId(String id) {
+        TourActionType[] values = TourActionType.values();
+        for (TourActionType actionType : values) {
+            if (actionType.getId().equals(id)) {
+                return actionType;
+            }
+        }
+        return null;
+
     }
 
     public abstract void execute(TourProvider provider);

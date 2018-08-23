@@ -13,10 +13,13 @@ import com.vaadin.ui.AbstractComponent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
 
-
+/**
+ * A single step of a tour.
+ *
+ * @see Tour
+ */
 public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.step.Step> implements Step {
 
     protected Tour tour;
@@ -35,27 +38,55 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
 
     protected Component attachedTo;
 
+    /**
+     * Construct a new step with the given id.
+     *
+     * @param id The id of the step
+     */
     public WebStep(String id) {
         Preconditions.checkNotNullArgument(id);
         extension = createExtension(id);
         initExtension(extension);
     }
 
-    @Override
+    /**
+     * Create an extension for a vaadin step.
+     *
+     * @param id The step id
+     * @return The vaadin step extension
+     */
     protected org.vaadin.addons.producttour.step.Step createExtension(String id) {
         return new org.vaadin.addons.producttour.step.Step(id);
     }
 
+    /**
+     * Initialize a step extension.
+     *
+     * @param extension The step extension
+     */
     @Override
     protected void initExtension(org.vaadin.addons.producttour.step.Step extension) {
         extension.setSizeFull();
     }
 
+    /**
+     * Get the tour this step is added to.
+     *
+     * @return The tour
+     */
     @Override
     public Tour getTour() {
         return tour;
     }
 
+    /**
+     * DO NOT USE!
+     * <p>
+     * Used internally to add the step to the given tour.
+     * Please use {@link Tour#addStep(Step)} instead.
+     *
+     * @param tour The tour the step should be added to
+     */
     @Override
     public void setTour(Tour tour) {
         org.vaadin.addons.producttour.tour.Tour vaadinTour = tour.unwrap(org.vaadin.addons.producttour.tour.Tour.class);
@@ -63,24 +94,54 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
         this.tour = tour;
     }
 
+    /**
+     * Set the title of the step.
+     *
+     * @param title The title to be set
+     */
     @Override
     public void setTitle(String title) {
         extension.setTitle(title);
     }
 
+    /**
+     * Get the title of the step.
+     *
+     * @return The title of the step
+     */
     @Override
     public String getTitle() {
         return extension.getTitle();
     }
 
+    /**
+     * Set the text of the step.
+     *
+     * @param text The text to be set
+     */
     @Override
     public void setText(String text) {
         extension.setText(text);
     }
 
+    /**
+     * Get the text of the step.
+     *
+     * @return The text of the step
+     */
     @Override
     public String getText() {
         return extension.getText();
+    }
+
+    /**
+     * Check if the step is currently visible.
+     *
+     * @return <code>true</code> if the step is currently visible, <code>false</code> else
+     */
+    @Override
+    public boolean isVisible() {
+        return extension.isVisible();
     }
 
     @Override
@@ -89,8 +150,8 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
     }
 
     @Override
-    public boolean isVisible() {
-        return extension.isVisible();
+    public void setSizeUndefined() {
+        extension.setSizeUndefined();
     }
 
     @Override
@@ -123,31 +184,66 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
         return WebAbstractComponent.UNIT_SYMBOLS.indexOf(extension.getWidthUnits());
     }
 
+    /**
+     * Get the buttons of the step.
+     *
+     * @return The buttons of the step inside an unmodifiable container
+     */
     @Override
     public List<StepButton> getButtons() {
         return Collections.unmodifiableList(buttonList);
     }
 
+    /**
+     * Get a button by its index.
+     *
+     * @param index The index of the button to get
+     * @return The button at the given index
+     */
     @Override
     public StepButton getButtonByIndex(int index) {
         return buttonList.get(index);
     }
 
+    /**
+     * Get the count of buttons of this step.
+     *
+     * @return The count of buttons of this step
+     */
     @Override
     public int getButtonCount() {
         return buttonList.size();
     }
 
+    /**
+     * Get the id of the step.
+     *
+     * @return The id of the step
+     */
     @Override
     public String getId() {
         return extension.getId();
     }
 
+    /**
+     * Get the component the step is attached to.
+     *
+     * @return The component or <code>null</code> if the step is not attached to any component
+     */
     @Override
     public Component getAttachedTo() {
         return attachedTo;
     }
 
+    /**
+     * Set the component the step should be attached to.
+     * <p>
+     * If set to <code>null</code>, the step will not be attached and shown in the middle of the
+     * screen.
+     *
+     * @param component The component to attach the step to or <code>null</code>
+     * @see #setDetached()
+     */
     @Override
     public void setAttachedTo(Component component) {
         attachedTo = component;
@@ -155,102 +251,183 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
         extension.setAttachedTo(abstractComponent);
     }
 
+    /**
+     * Set the step to be not attached to any component. The step will then be shown in the middle of
+     * the screen. This is equal to calling {@link #setAttachedTo(Component)} with
+     * <code>null</code> as parameter.
+     */
     @Override
     public void setDetached() {
         attachedTo = null;
         extension.setDetached();
     }
 
+    /**
+     * Set the cancellable state of the step.
+     *
+     * @param cancellable <code>true</code> if the step should be cancellable, <code>false</code> else
+     */
     @Override
     public void setCancellable(boolean cancellable) {
         extension.setCancellable(cancellable);
     }
 
+    /**
+     * Get the cancellable state of the step.
+     *
+     * @return <code>true</code> if the step is cancellable, <code>false</code> else
+     */
     @Override
     public boolean isCancellable() {
         return extension.isCancellable();
     }
 
+    /**
+     * Set the modality of the step.
+     *
+     * @param modal <code>true</code> if the step should be modal, <code>false</code> else
+     */
     @Override
     public void setModal(boolean modal) {
         extension.setModal(modal);
     }
 
+    /**
+     * Get the modal state of the step.
+     *
+     * @return <code>true</code> if the step is modal, <code>false</code> else
+     */
     @Override
     public boolean isModal() {
         return extension.isModal();
     }
 
+    /**
+     * Set the scrollTo state of the step.
+     *
+     * @param scrollTo <code>true</code> if the step should be scrolled into view when shown, <code>false</code>
+     *                 else
+     */
     @Override
     public void setScrollTo(boolean scrollTo) {
         extension.setScrollTo(scrollTo);
     }
 
+    /**
+     * Get the scrollTo state of the step.
+     *
+     * @return <code>true</code> if the step is scrolled to when shown, <code>false</code> else
+     */
     @Override
     public boolean isScrollTo() {
         return extension.isScrollTo();
     }
 
+    /**
+     * Sets the content mode for the text of the step.
+     *
+     * @param contentMode The content mode to be set
+     */
     @Override
     public void setTextContentMode(ContentMode contentMode) {
         extension.setTextContentMode(toVaadinContentMode(contentMode));
     }
 
+    /**
+     * Get the content mode for the text of the step.
+     *
+     * @return The content mode for the text of the step
+     */
     @Override
     public ContentMode getTextContentMode() {
         return fromVaadinContentMode(extension.getTextContentMode());
     }
 
+    /**
+     * Sets the content mode for the title of the step.
+     *
+     * @param contentMode The content mode to be set
+     */
     @Override
     public void setTitleContentMode(ContentMode contentMode) {
-        extension.setTextContentMode(toVaadinContentMode(contentMode));
+        extension.setTitleContentMode(toVaadinContentMode(contentMode));
     }
 
+    /**
+     * Get the content mode for the title of the step.
+     *
+     * @return The content mode for the title of the step
+     */
     @Override
     public ContentMode getTitleContentMode() {
         return fromVaadinContentMode(extension.getTitleContentMode());
     }
 
+    /**
+     * Set the anchor the step is shown relative to the component it is attached to.
+     *
+     * @param anchor The anchor to be set
+     */
     @Override
     public void setAnchor(StepAnchor anchor) {
         extension.setAnchor(toVaadinStepAnchor(anchor));
     }
 
+    /**
+     * Get the anchor the step is shown relative to the component it is attached to.
+     *
+     * @return The anchor of the step
+     */
     @Override
     public StepAnchor getAnchor() {
         return fromVaadinStepAnchor(extension.getAnchor());
     }
 
+    /**
+     * Hide this step and trigger the cancel provider.
+     */
     @Override
     public void cancel() {
         extension.cancel();
     }
 
+    /**
+     * Hide this step and trigger the complete provider.
+     */
     @Override
     public void complete() {
         extension.complete();
     }
 
+    /**
+     * Hide this step.
+     */
     @Override
     public void hide() {
         extension.hide();
     }
 
+    /**
+     * Show this step.
+     */
     @Override
     public void show() {
         extension.show();
     }
 
+    /**
+     * Scroll to this steps element.
+     */
     @Override
     public void scrollTo() {
         extension.scrollTo();
     }
 
-    @Override
-    public void setSizeUndefined() {
-        extension.setSizeUndefined();
-    }
-
+    /**
+     * Add a button the step. The button will be shown in the order they are added.
+     *
+     * @param button The button to be added
+     */
     @Override
     public void addButton(StepButton button) {
         button.setStep(this);
@@ -259,6 +436,11 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
         extension.addButton(vaadinStepButton);
     }
 
+    /**
+     * Remove a button from the step.
+     *
+     * @param button The button to be removed
+     */
     @Override
     public void removeButton(StepButton button) {
         button.setStep(null);
@@ -267,6 +449,11 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
         extension.removeButton(vaadinStepButton);
     }
 
+    /**
+     * Add the given listener to the step that will be triggered if the step is cancelled.
+     *
+     * @param cancelListener The listener to be added
+     */
     @Override
     public void addCancelListener(Consumer<CancelEvent> cancelListener) {
         if (stepCancelListeners == null) {
@@ -287,6 +474,11 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
         }
     }
 
+    /**
+     * Remove the given listener from the step.
+     *
+     * @param cancelListener The listener to be removed.
+     */
     @Override
     public void removeCancelListener(Consumer<CancelEvent> cancelListener) {
         if (stepCancelListeners != null) {
@@ -300,6 +492,11 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
         }
     }
 
+    /**
+     * Add the given listener to the step that will be triggered if the step is completed.
+     *
+     * @param completeListener The listener to be added
+     */
     @Override
     public void addCompleteListener(Consumer<CompleteEvent> completeListener) {
         if (stepCompleteListeners == null) {
@@ -320,6 +517,11 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
         }
     }
 
+    /**
+     * Remove the given listener from the step.
+     *
+     * @param completeListener The listener to be removed.
+     */
     @Override
     public void removeCompleteListener(Consumer<CompleteEvent> completeListener) {
         if (stepCompleteListeners != null) {
@@ -333,6 +535,11 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
         }
     }
 
+    /**
+     * Add the given listener to the step that will be triggered if the step is hidden.
+     *
+     * @param hideListener The listener to be added
+     */
     @Override
     public void addHideListener(Consumer<HideEvent> hideListener) {
         if (stepHideListeners == null) {
@@ -353,6 +560,11 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
         }
     }
 
+    /**
+     * Remove the given listener from the step.
+     *
+     * @param hideListener The listener to be removed.
+     */
     @Override
     public void removeHideListener(Consumer<HideEvent> hideListener) {
         if (stepHideListeners != null) {
@@ -366,6 +578,11 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
         }
     }
 
+    /**
+     * Add the given listener to the step that will be triggered if the step is shown.
+     *
+     * @param showListener The listener to be added
+     */
     @Override
     public void addShowListener(Consumer<ShowEvent> showListener) {
         if (stepShowListeners == null) {
@@ -386,6 +603,11 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
         }
     }
 
+    /**
+     * Remove the given listener from the step.
+     *
+     * @param showListener The listener to be removed.
+     */
     @Override
     public void removeShowListener(Consumer<ShowEvent> showListener) {
         if (stepShowListeners != null) {
@@ -399,6 +621,12 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
         }
     }
 
+    /**
+     * Convert a cuba step anchor to a vaadin step anchor
+     *
+     * @param stepAnchor The cuba step anchor
+     * @return The vaadin step anchor
+     */
     public org.vaadin.addons.producttour.shared.step.StepAnchor toVaadinStepAnchor(Step.StepAnchor stepAnchor) {
         Preconditions.checkNotNullArgument(stepAnchor);
 
@@ -416,6 +644,12 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
         }
     }
 
+    /**
+     * Convert a vaadin step anchor to a cuba step anchor
+     *
+     * @param stepAnchor The vaadin step anchor
+     * @return The cuba step anchor
+     */
     public Step.StepAnchor fromVaadinStepAnchor(org.vaadin.addons.producttour.shared.step.StepAnchor stepAnchor) {
         Preconditions.checkNotNullArgument(stepAnchor);
 
@@ -433,6 +667,12 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
         }
     }
 
+    /**
+     * Convert a cuba content mode to a vaadin content mode
+     *
+     * @param contentMode The cuba content mode
+     * @return The vaadin content mode
+     */
     public org.vaadin.addons.producttour.shared.step.ContentMode toVaadinContentMode(Step.ContentMode contentMode) {
         Preconditions.checkNotNullArgument(contentMode);
 
@@ -448,6 +688,12 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
         }
     }
 
+    /**
+     * Convert a vaadin content mode to a cuba content mode
+     *
+     * @param contentMode The vaadin content mode
+     * @return The cuba content mode
+     */
     public Step.ContentMode fromVaadinContentMode(org.vaadin.addons.producttour.shared.step.ContentMode contentMode) {
         Preconditions.checkNotNullArgument(contentMode);
 

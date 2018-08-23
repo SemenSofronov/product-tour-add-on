@@ -3,6 +3,7 @@ package com.company.scenarioaddon.web.gui.components;
 import com.haulmont.cuba.gui.components.Component;
 
 import java.util.EventObject;
+import java.util.List;
 import java.util.function.Consumer;
 
 public interface StepButton {
@@ -32,6 +33,8 @@ public interface StepButton {
     void addStepButtonClickListener(Consumer<ClickEvent> listener);
 
     void removeStepButtonClickListener(Consumer<ClickEvent> listener);
+
+    List<Consumer<ClickEvent>> getClickListeners();
 
     class ClickEvent extends EventObject implements TourProvider, StepProvider, StepButtonProvider {
         protected Component.MouseEventDetails details;

@@ -1,188 +1,223 @@
 package com.haulmont.scenario;
 
+import com.company.scenarioaddon.web.gui.components.Step;
+import com.company.scenarioaddon.web.gui.components.StepButton;
+import com.company.scenarioaddon.web.gui.components.WebTour;
 import com.company.scenarioaddon.web.gui.utils.TourParser;
-import com.google.gson.internal.LinkedTreeMap;
-import com.haulmont.cuba.client.sys.MessagesClientImpl;
+import com.haulmont.cuba.client.testsupport.CubaClientTestCase;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Resources;
 import com.haulmont.cuba.core.sys.ResourcesImpl;
+import com.haulmont.cuba.gui.components.Component;
+import com.haulmont.cuba.web.gui.WebComponentsFactory;
+import com.haulmont.cuba.web.gui.components.WebButtonsPanel;
+import com.haulmont.cuba.web.gui.components.WebTextField;
+import com.vaadin.server.AbstractClientConnector;
+import mockit.integration.junit4.JMockit;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.vaadin.addons.producttour.tour.Tour;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
-public class TourParserTest {
+@RunWith(JMockit.class)
+public class TourParserTest extends CubaClientTestCase {
 
     protected Resources resources;
-    protected Messages messages;
-    protected TourParser tourParser;
+    protected TestTourParser tourParser;
+    protected WebComponentsFactory componentsFactory;
+
+    protected TestTextField textField1;
+    protected TestTextField textField2;
 
     @Before
-    public void initTest() {
+    public void init() {
+        setupInfrastructure();
         resources = new ResourcesImpl(getClass().getClassLoader(), null);
-        messages = new MessagesClientImpl();
-        tourParser = new TourParser();
+        tourParser = new TestTourParser();
+        tourParser.setMessages(messages);
+        componentsFactory = new WebComponentsFactory();
+    }
+
+    protected class TestTourParser extends TourParser {
+
+        @Override
+        public com.company.scenarioaddon.web.gui.components.Tour createTour(String json, String messagesPack,
+                                                                            Component extensionFor) {
+
+            initTourParser(messagesPack, extensionFor);
+
+            com.company.scenarioaddon.web.gui.components.Tour tour = new TestTour(extensionFor);
+            loadTour(json, tour);
+            return tour;
+        }
+
+        protected void setMessages(Messages messages) {
+            this.messages = messages;
+        }
+
+        @Override
+        protected void initTourParser(String messagesPack, Component extensionFor) {
+            this.messagesPack = messagesPack;
+            extension = extensionFor;
+        }
+    }
+
+    protected class TestTour extends WebTour {
+
+        /**
+         * Construct a new tour.
+         */
+        TestTour(Component component) {
+            super(component);
+        }
+
+        class TestCubaTour extends Tour {
+            @Override
+            protected void extend(AbstractClientConnector target) {
+            }
+        }
+
+        @Override
+        protected Tour createExtension(Component component) {
+            return new TestCubaTour();
+        }
+    }
+
+    protected class TestTextField extends WebTextField {
+        @Override
+        public void setId(String id) {
+            if (!Objects.equals(this.id, id)) {
+                if (frame != null) {
+                    frame.unregisterComponent(this);
+                }
+
+                this.id = id;
+                if (this.component != null) {
+                    this.component.setCubaId(id);
+                }
+
+                if (frame != null) {
+                    frame.registerComponent(this);
+                }
+            }
+        }
     }
 
     @Test
-    public void parseTour() {
+    public void parseTourFromJson() {
         String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/mytour"));
-        tourParser.setSteps(file);
 
-        ArrayList steps = tourParser.getSteps();
-        Assert.assertEquals(steps.size(), 2);
+        Component.Container container = componentsFactory.createComponent(WebButtonsPanel.class);
 
-        LinkedTreeMap firstStep = (LinkedTreeMap) steps.get(0);
+        textField1 = new TestTextField();
+        textField1.setId("button1");
+        container.add(textField1);
 
-        parseFirstStep(firstStep);
+        textField2 = new TestTextField();
+        textField2.setId("button2");
+        container.add(textField2);
 
-        LinkedTreeMap secondStep = (LinkedTreeMap) steps.get(1);
+        com.company.scenarioaddon.web.gui.components.Tour tour = tourParser.createTour(file,
+                "com/haulmont/scenario/messages.properties", container);
 
-        parseSecondStep(secondStep);
+        List<Step> steps = tour.getSteps();
+
+        validateFirstStep(steps.get(0));
+
+        validateSecondStep(steps.get(1));
     }
 
-    protected void parseSecondStep(LinkedTreeMap secondStep) {
-        ArrayList buttons = tourParser.getButtons(secondStep);
-        Assert.assertNotEquals(buttons.size(), 3);
+    protected void validateFirstStep(Step firstStep) {
+        Assert.assertEquals(firstStep.getId(), "step1");
+        Assert.assertEquals(firstStep.getAnchor(), Step.StepAnchor.LEFT);
+        Assert.assertEquals(firstStep.getAttachedTo(), textField1);
 
-        String cancellable = tourParser.getCancellable(secondStep);
-        Assert.assertNotEquals(cancellable, "true");
+        Assert.assertEquals(firstStep.getHeight(), 600, 0);
+        Assert.assertEquals(firstStep.getWidth(), 400, 0);
 
-        String height = tourParser.getHeight(secondStep);
-        Assert.assertNotEquals(height, "600");
+        Assert.assertEquals(firstStep.getText(), messages.getMessage("com/haulmont/scenario/messages.properties",
+                "tour.createButtonText"));
+        Assert.assertEquals(firstStep.getTitle(), messages.getMessage("com/haulmont/scenario/messages.properties",
+                "tour.title"));
+        Assert.assertEquals(firstStep.getTextContentMode(), Step.ContentMode.HTML);
+        Assert.assertEquals(firstStep.getTitleContentMode(), Step.ContentMode.HTML);
 
-        String width = tourParser.getWidth(secondStep);
-        Assert.assertNotEquals(width, "400");
+        Assert.assertTrue(firstStep.isCancellable());
+        Assert.assertTrue(firstStep.isScrollTo());
+        Assert.assertFalse(firstStep.isModal());
+        Assert.assertFalse(firstStep.isVisible());
 
-        String id = tourParser.getId(secondStep);
-        Assert.assertNotEquals(id, "step1");
+        List<StepButton> firstStepButtons = firstStep.getButtons();
+        Assert.assertEquals(firstStepButtons.size(), 2);
 
-        String modal = tourParser.getModal(secondStep);
-        Assert.assertNull(modal);
+        validateFirstStepFirstButton(firstStepButtons.get(0));
 
-        String scrollTo = tourParser.getScrollTo(secondStep);
-        Assert.assertNotEquals(scrollTo, "true");
-
-        String text = tourParser.getText(secondStep);
-        Assert.assertNotEquals(text, "<i>text</i>");
-
-        String textContentMode = tourParser.getTextContentMode(secondStep);
-        Assert.assertNotEquals(textContentMode, "HTML");
-
-        String title = tourParser.getTitle(secondStep);
-        Assert.assertNotEquals(title, "Test <i>Tour</i>");
-
-        String titleContentMode = tourParser.getTitleContentMode(secondStep);
-        Assert.assertNotEquals(titleContentMode, "HTML");
-
-        LinkedTreeMap firstButton = (LinkedTreeMap) buttons.get(0);
-
-        parseFirstButtonInSecondStep(firstButton);
-
-        LinkedTreeMap secondButton = (LinkedTreeMap) buttons.get(1);
-
-        parseSecondButtonInSecondStep(secondButton);
+        validateFirstStepSecondButton(firstStepButtons.get(1));
     }
 
-    protected void parseSecondButtonInSecondStep(LinkedTreeMap secondButton) {
-        String action = tourParser.getAction(secondButton);
-        Assert.assertEquals(action, "step:complete");
+    protected void validateFirstStepSecondButton(StepButton firstStepSecondButton) {
+        Assert.assertEquals(firstStepSecondButton.getCaption(), "Next");
+        Assert.assertEquals(firstStepSecondButton.getStyleName(), "primary");
 
-        String caption = tourParser.getCaption(secondButton);
-        Assert.assertEquals(caption, "Finish");
-
-        String style = tourParser.getStyle(secondButton);
-        Assert.assertEquals(style, "friendly");
-
-        String enabled = tourParser.getEnabled(secondButton);
-        Assert.assertEquals(enabled, "true");
+        Assert.assertTrue(firstStepSecondButton.isEnabled());
+        List<Consumer<StepButton.ClickEvent>> clickListeners = firstStepSecondButton.getClickListeners();
+        Assert.assertEquals(clickListeners.size(), 1);
     }
 
-    protected void parseFirstButtonInSecondStep(LinkedTreeMap firstButton) {
-        String action = tourParser.getAction(firstButton);
-        Assert.assertEquals(action, "tour:back");
+    protected void validateFirstStepFirstButton(StepButton firstStepFirstButton) {
+        Assert.assertEquals(firstStepFirstButton.getCaption(), "Cancel");
+        Assert.assertEquals(firstStepFirstButton.getStyleName(), "danger");
 
-        String caption = tourParser.getCaption(firstButton);
-        Assert.assertEquals(caption, "Back");
-
-        String style = tourParser.getStyle(firstButton);
-        Assert.assertEquals(style, "primary");
-
-        String enabled = tourParser.getEnabled(firstButton);
-        Assert.assertEquals(enabled, "true");
+        Assert.assertFalse(firstStepFirstButton.isEnabled());
+        List<Consumer<StepButton.ClickEvent>> clickListeners = firstStepFirstButton.getClickListeners();
+        Assert.assertEquals(clickListeners.size(), 1);
     }
 
-    protected void parseFirstStep(LinkedTreeMap firstStep) {
-        ArrayList buttons = tourParser.getButtons(firstStep);
-        Assert.assertEquals(buttons.size(), 2);
+    protected void validateSecondStep(Step secondStep) {
+        Assert.assertEquals(secondStep.getId(), "step2");
+        Assert.assertEquals(secondStep.getAnchor(), Step.StepAnchor.TOP);
+        Assert.assertEquals(secondStep.getAttachedTo(), textField2);
 
-        String cancellable = tourParser.getCancellable(firstStep);
-        Assert.assertEquals(cancellable, "true");
+        Assert.assertEquals(secondStep.getText(), "text");
+        Assert.assertEquals(secondStep.getTitle(), "Title");
+        Assert.assertEquals(secondStep.getTextContentMode(), Step.ContentMode.TEXT);
+        Assert.assertEquals(secondStep.getTitleContentMode(), Step.ContentMode.TEXT);
 
-        String height = tourParser.getHeight(firstStep);
-        Assert.assertEquals(height, "600");
+        Assert.assertFalse(secondStep.isCancellable());
+        Assert.assertFalse(secondStep.isScrollTo());
+        Assert.assertFalse(secondStep.isModal());
+        Assert.assertFalse(secondStep.isVisible());
 
-        String width = tourParser.getWidth(firstStep);
-        Assert.assertEquals(width, "400");
+        List<StepButton> secondStepButtons = secondStep.getButtons();
+        Assert.assertEquals(secondStepButtons.size(), 2);
 
-        String id = tourParser.getId(firstStep);
-        Assert.assertEquals(id, "step1");
+        validateSecondStepFirstButton(secondStepButtons.get(0));
 
-        String modal = tourParser.getModal(firstStep);
-        Assert.assertNull(modal);
-
-        String scrollTo = tourParser.getScrollTo(firstStep);
-        Assert.assertEquals(scrollTo, "true");
-
-        String text = tourParser.getText(firstStep);
-        Assert.assertEquals(text, "<i>text</i>");
-
-        String textContentMode = tourParser.getTextContentMode(firstStep);
-        Assert.assertEquals(textContentMode, "HTML");
-
-        String title = tourParser.getTitle(firstStep);
-        Assert.assertEquals(title, "Test <i>Tour</i>");
-
-        String titleContentMode = tourParser.getTitleContentMode(firstStep);
-        Assert.assertEquals(titleContentMode, "HTML");
-
-        LinkedTreeMap firstButton = (LinkedTreeMap) buttons.get(0);
-
-        parseFirstButtonInFirstStep(firstButton);
-
-        LinkedTreeMap secondButton = (LinkedTreeMap) buttons.get(1);
-
-        parseSecondButtonInFirstStep(secondButton);
+        validateSecondStepSecondButton(secondStepButtons.get(1));
     }
 
-    protected void parseSecondButtonInFirstStep(LinkedTreeMap secondButton) {
-        String action = tourParser.getAction(secondButton);
-        Assert.assertEquals(action, "tour:next");
+    protected void validateSecondStepFirstButton(StepButton secondStepFirstButton) {
+        Assert.assertEquals(secondStepFirstButton.getCaption(), "Back");
+        Assert.assertEquals(secondStepFirstButton.getStyleName(), "primary");
 
-        String caption = tourParser.getCaption(secondButton);
-        Assert.assertEquals(caption, "Next");
+        Assert.assertTrue(secondStepFirstButton.isEnabled());
+        List<Consumer<StepButton.ClickEvent>> clickListeners = secondStepFirstButton.getClickListeners();
+        Assert.assertEquals(clickListeners.size(), 1);
 
-        String style = tourParser.getStyle(secondButton);
-        Assert.assertEquals(style, "primary");
-
-        String enabled = tourParser.getEnabled(secondButton);
-        Assert.assertEquals(enabled, "true");
     }
 
-    protected void parseFirstButtonInFirstStep(LinkedTreeMap firstButton) {
-        String action = tourParser.getAction(firstButton);
-        Assert.assertEquals(action, "tour:cancel");
+    protected void validateSecondStepSecondButton(StepButton secondStepSecondButton) {
+        Assert.assertEquals(secondStepSecondButton.getCaption(), "Finish");
+        Assert.assertEquals(secondStepSecondButton.getStyleName(), "friendly");
 
-        String caption = tourParser.getCaption(firstButton);
-        Assert.assertEquals(caption, "Cancel");
-
-        String style = tourParser.getStyle(firstButton);
-        Assert.assertEquals(style, "danger");
-
-        String enabled = tourParser.getEnabled(firstButton);
-        Assert.assertEquals(enabled, "false");
+        Assert.assertTrue(secondStepSecondButton.isEnabled());
+        List<Consumer<StepButton.ClickEvent>> clickListeners = secondStepSecondButton.getClickListeners();
+        Assert.assertEquals(clickListeners.size(), 1);
 
     }
 }

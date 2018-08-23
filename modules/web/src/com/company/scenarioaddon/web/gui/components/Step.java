@@ -7,6 +7,7 @@ package com.company.scenarioaddon.web.gui.components;
 
 import com.haulmont.cuba.gui.components.Component;
 
+import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.List;
 import java.util.function.Consumer;
@@ -87,16 +88,60 @@ public interface Step {
     void scrollTo();
 
     enum StepAnchor {
-        TOP,
-        RIGHT,
-        BOTTOM,
-        LEFT
+        TOP("top"),
+        RIGHT("right"),
+        BOTTOM("bottom"),
+        LEFT("left");
+
+        private String id;
+
+        StepAnchor(String id) {
+            this.id = id;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        @Nullable
+        public static Step.StepAnchor fromId(String id) {
+            Step.StepAnchor[] values = Step.StepAnchor.values();
+            for (Step.StepAnchor anchor : values) {
+                if (anchor.getId().equals(id)) {
+                    return anchor;
+                }
+            }
+            return null;
+
+        }
     }
 
     enum ContentMode {
-        TEXT,
-        PREFORMATTED,
-        HTML
+        TEXT("text"),
+        PREFORMATTED("preformatted"),
+        HTML("html");
+
+        private String id;
+
+        ContentMode(String id) {
+            this.id = id;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        @Nullable
+        public static Step.ContentMode fromId(String id) {
+            Step.ContentMode[] values = Step.ContentMode.values();
+            for (Step.ContentMode mode : values) {
+                if (mode.getId().equals(id)) {
+                    return mode;
+                }
+            }
+            return null;
+
+        }
     }
 
     void addCancelListener(Consumer<CancelEvent> listener);
