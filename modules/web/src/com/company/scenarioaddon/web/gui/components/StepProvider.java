@@ -7,5 +7,10 @@ package com.company.scenarioaddon.web.gui.components;
 
 public interface StepProvider {
 
+    /**
+     * Get the step that is the source of the provider.
+     *
+     * @return the step that caused the provider
+     */
     Step getStep();
 }

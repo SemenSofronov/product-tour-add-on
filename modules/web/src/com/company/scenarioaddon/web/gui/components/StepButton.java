@@ -6,39 +6,124 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * A button of a step that can be used to provide different actions if clicked.
+ *
+ * @see Step
+ */
 public interface StepButton {
 
+    /**
+     * Get client specific component instance. Can be used in client module to simplify invocation of underlying API.
+     *
+     * @param internalClass class of underlying component implementation based on Vaadin
+     * @param <X>           type of internal class
+     * @return internal client specific component
+     */
     <X> X unwrap(Class<X> internalClass);
 
+    /**
+     * Get the step the button is attached to.
+     *
+     * @return the step
+     */
     Step getStep();
 
+    /**
+     * Add the button to the given step.
+     * Use {@link Step#addButton(StepButton)} instead.
+     *
+     * @param step the step the button should be added to
+     */
     void setStep(Step step);
 
+    /**
+     * Get the caption of the button
+     *
+     * @return the caption of the button
+     */
     String getCaption();
 
+    /**
+     * Set the caption of the button.
+     *
+     * @param caption the caption to be set
+     */
     void setCaption(String caption);
 
+    /**
+     * Get the enabled state of the button.
+     *
+     * @return <code>true</code> if the button is enabled, <code>false</code> else
+     */
     boolean isEnabled();
 
+    /**
+     * Set the enabled state of the button.
+     *
+     * @param enabled the enabled state to be set
+     */
     void setEnabled(boolean enabled);
 
+    /**
+     * Adds one or more style names to this component. Multiple styles can be
+     * specified as a space-separated list of style names.
+     *
+     * @param style one or more style names separated by space.
+     */
     void addStyleName(String style);
 
+    /**
+     * Removes one or more style names from component. Multiple styles can be
+     * specified as a space-separated list of style names.
+     *
+     * @param style one or more style names separated by space.
+     */
     void removeStyleName(String style);
 
+    /**
+     * Styles implementation is client-type-specific.
+     *
+     * @return current style name.
+     */
     String getStyleName();
 
+    /**
+     * Sets one or more style names of the component, replacing any
+     * previous styles. Multiple styles can be specified as a
+     * space-separated list of style names.
+     * <p>
+     * Styles implementation is client-type-specific.
+     *
+     * @param style one or more style names separated by space.
+     */
     void setStyleName(String style);
 
+    /**
+     * Adds a click listener to the button.
+     *
+     * @param listener the listener to be added
+     */
     void addStepButtonClickListener(Consumer<ClickEvent> listener);
 
+    /**
+     * Remove the given click listener from the button.
+     *
+     * @param listener the listener to be removed
+     */
     void removeStepButtonClickListener(Consumer<ClickEvent> listener);
 
-    List<Consumer<ClickEvent>> getClickListeners();
-
+    /**
+     * Event class that contains information about a click.
+     */
     class ClickEvent extends EventObject implements TourProvider, StepProvider, StepButtonProvider {
         protected Component.MouseEventDetails details;
 
+        /**
+         * Construct a new provider.
+         *
+         * @param source the source of the provider
+         */
         public ClickEvent(StepButton source) {
             this(source, null);
         }

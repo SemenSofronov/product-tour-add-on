@@ -2,30 +2,31 @@ package com.haulmont.scenario;
 
 import com.company.scenarioaddon.web.gui.components.Step;
 import com.company.scenarioaddon.web.gui.components.StepButton;
-import com.company.scenarioaddon.web.gui.components.WebTour;
+import com.company.scenarioaddon.web.gui.components.Tour;
 import com.company.scenarioaddon.web.gui.utils.TourParser;
 import com.haulmont.cuba.client.testsupport.CubaClientTestCase;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Resources;
 import com.haulmont.cuba.core.sys.ResourcesImpl;
-import com.haulmont.cuba.gui.components.Component;
+import com.haulmont.cuba.gui.components.Window;
 import com.haulmont.cuba.web.gui.WebComponentsFactory;
-import com.haulmont.cuba.web.gui.components.WebButtonsPanel;
 import com.haulmont.cuba.web.gui.components.WebTextField;
-import com.vaadin.server.AbstractClientConnector;
 import mockit.integration.junit4.JMockit;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.vaadin.addons.producttour.tour.Tour;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 @RunWith(JMockit.class)
 public class TourParserTest extends CubaClientTestCase {
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     protected Resources resources;
     protected TestTourParser tourParser;
@@ -44,47 +45,13 @@ public class TourParserTest extends CubaClientTestCase {
     }
 
     protected class TestTourParser extends TourParser {
-
         @Override
-        public com.company.scenarioaddon.web.gui.components.Tour createTour(String json, String messagesPack,
-                                                                            Component extensionFor) {
-
-            initTourParser(messagesPack, extensionFor);
-
-            com.company.scenarioaddon.web.gui.components.Tour tour = new TestTour(extensionFor);
-            loadTour(json, tour);
-            return tour;
+        public com.company.scenarioaddon.web.gui.components.Tour createTour(String json, String messagesPack, Window extension) {
+            return super.createTour(json, messagesPack, extension);
         }
 
         protected void setMessages(Messages messages) {
             this.messages = messages;
-        }
-
-        @Override
-        protected void initTourParser(String messagesPack, Component extensionFor) {
-            this.messagesPack = messagesPack;
-            extension = extensionFor;
-        }
-    }
-
-    protected class TestTour extends WebTour {
-
-        /**
-         * Construct a new tour.
-         */
-        TestTour(Component component) {
-            super(component);
-        }
-
-        class TestCubaTour extends Tour {
-            @Override
-            protected void extend(AbstractClientConnector target) {
-            }
-        }
-
-        @Override
-        protected Tour createExtension(Component component) {
-            return new TestCubaTour();
         }
     }
 
@@ -109,27 +76,142 @@ public class TourParserTest extends CubaClientTestCase {
     }
 
     @Test
-    public void parseTourFromJson() {
-        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/mytour"));
+    public void parseCorrectTourFromJson() {
+        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/correctTour.json"));
 
-        Component.Container container = componentsFactory.createComponent(WebButtonsPanel.class);
+        Window window = componentsFactory.createComponent(Window.class);
 
         textField1 = new TestTextField();
         textField1.setId("button1");
-        container.add(textField1);
+        window.add(textField1);
 
         textField2 = new TestTextField();
         textField2.setId("button2");
-        container.add(textField2);
+        window.add(textField2);
 
         com.company.scenarioaddon.web.gui.components.Tour tour = tourParser.createTour(file,
-                "com/haulmont/scenario/messages.properties", container);
+                "com/haulmont/scenario/messages.properties", window);
 
         List<Step> steps = tour.getSteps();
 
         validateFirstStep(steps.get(0));
 
         validateSecondStep(steps.get(1));
+    }
+
+    @Test
+    public void validateIncorrectAttachTo() {
+        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectAttachTo.json"));
+
+        Window window = componentsFactory.createComponent(Window.class);
+
+        try {
+            tourParser.createTour(file, null, window);
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "AttachTo id is wrong!");
+        }
+    }
+
+    @Test
+    public void validateIncorrectAnchor() {
+        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectAnchor.json"));
+
+        Window window = componentsFactory.createComponent(Window.class);
+
+        try {
+            tourParser.createTour(file, null, window);
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "Anchor value is wrong!");
+        }
+    }
+
+    @Test
+    public void validateIncorrectTextContentMode() {
+        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectTextContentMode.json"));
+
+        Window window = componentsFactory.createComponent(Window.class);
+
+        try {
+            tourParser.createTour(file, null, window);
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "TextContentMode value is wrong!");
+        }
+    }
+
+    @Test
+    public void validateIncorrectTitleContentMode() {
+        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectTitleContentMode.json"));
+
+        Window window = componentsFactory.createComponent(Window.class);
+
+        try {
+            tourParser.createTour(file, null, window);
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "TitleContentMode value is wrong!");
+        }
+    }
+
+    @Test
+    public void validateIncorrectWidth() {
+        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectWidth.json"));
+
+        Window window = componentsFactory.createComponent(Window.class);
+
+        try {
+            tourParser.createTour(file, null, window);
+        } catch (IllegalArgumentException e) {
+            Assert.assertNotNull(e.getMessage());
+        }
+    }
+
+    @Test
+    public void validateIncorrectHeight() {
+        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectHeight.json"));
+
+        Window window = componentsFactory.createComponent(Window.class);
+
+        try {
+            tourParser.createTour(file, null, window);
+        } catch (IllegalArgumentException e) {
+            Assert.assertNotNull(e.getMessage());
+        }
+    }
+
+    @Test
+    public void validateEmptyId() {
+        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/emptyId.json"));
+
+        Window window = componentsFactory.createComponent(Window.class);
+
+        Tour tour = tourParser.createTour(file, null, window);
+        Step step = tour.getSteps().get(0);
+        Assert.assertNotNull(step.getId());
+    }
+
+    @Test
+    public void validateEmptyCaption() {
+        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/emptyCaption.json"));
+
+        Window window = componentsFactory.createComponent(Window.class);
+
+        try {
+            tourParser.createTour(file, null, window);
+        } catch (IllegalArgumentException e) {
+            Assert.assertNotNull(e.getMessage());
+        }
+    }
+
+    @Test
+    public void validateIncorrectAction() {
+        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectAction.json"));
+
+        Window window = componentsFactory.createComponent(Window.class);
+
+        try {
+            tourParser.createTour(file, null, window);
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "Action value is wrong!");
+        }
     }
 
     protected void validateFirstStep(Step firstStep) {
@@ -163,19 +245,13 @@ public class TourParserTest extends CubaClientTestCase {
     protected void validateFirstStepSecondButton(StepButton firstStepSecondButton) {
         Assert.assertEquals(firstStepSecondButton.getCaption(), "Next");
         Assert.assertEquals(firstStepSecondButton.getStyleName(), "primary");
-
         Assert.assertTrue(firstStepSecondButton.isEnabled());
-        List<Consumer<StepButton.ClickEvent>> clickListeners = firstStepSecondButton.getClickListeners();
-        Assert.assertEquals(clickListeners.size(), 1);
     }
 
     protected void validateFirstStepFirstButton(StepButton firstStepFirstButton) {
         Assert.assertEquals(firstStepFirstButton.getCaption(), "Cancel");
         Assert.assertEquals(firstStepFirstButton.getStyleName(), "danger");
-
         Assert.assertFalse(firstStepFirstButton.isEnabled());
-        List<Consumer<StepButton.ClickEvent>> clickListeners = firstStepFirstButton.getClickListeners();
-        Assert.assertEquals(clickListeners.size(), 1);
     }
 
     protected void validateSecondStep(Step secondStep) {
@@ -204,20 +280,14 @@ public class TourParserTest extends CubaClientTestCase {
     protected void validateSecondStepFirstButton(StepButton secondStepFirstButton) {
         Assert.assertEquals(secondStepFirstButton.getCaption(), "Back");
         Assert.assertEquals(secondStepFirstButton.getStyleName(), "primary");
-
         Assert.assertTrue(secondStepFirstButton.isEnabled());
-        List<Consumer<StepButton.ClickEvent>> clickListeners = secondStepFirstButton.getClickListeners();
-        Assert.assertEquals(clickListeners.size(), 1);
 
     }
 
     protected void validateSecondStepSecondButton(StepButton secondStepSecondButton) {
         Assert.assertEquals(secondStepSecondButton.getCaption(), "Finish");
         Assert.assertEquals(secondStepSecondButton.getStyleName(), "friendly");
-
         Assert.assertTrue(secondStepSecondButton.isEnabled());
-        List<Consumer<StepButton.ClickEvent>> clickListeners = secondStepSecondButton.getClickListeners();
-        Assert.assertEquals(clickListeners.size(), 1);
 
     }
 }

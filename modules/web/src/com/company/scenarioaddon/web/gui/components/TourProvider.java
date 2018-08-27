@@ -7,5 +7,11 @@ package com.company.scenarioaddon.web.gui.components;
 
 public interface TourProvider {
 
+    /**
+     * Shortcut method to get the tour of the provider.
+     *
+     * @return the tour or <code>null</code> if the button that caused the provider is not attached to
+     * any step that is attached to a tour.
+     */
     Tour getTour();
 }

@@ -5,7 +5,9 @@
 
 package com.company.scenarioaddon.web.gui.components;
 
+import com.haulmont.bali.util.Preconditions;
 import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.ClientType;
 import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.actions.BaseAction;
 import com.haulmont.cuba.security.app.UserSettingService;
@@ -26,7 +28,7 @@ public class TourStartAction extends BaseAction {
 
     protected Tour tour;
 
-    protected String userSetting;
+    protected boolean hasSetting;
 
     @Inject
     protected UserSettingService userSettingService;
@@ -43,6 +45,16 @@ public class TourStartAction extends BaseAction {
     }
 
     /**
+     * Creates an action with the given tour.
+     *
+     * @param tour the tour to start
+     * @return the action
+     */
+    public static TourStartAction create(Tour tour) {
+        return AppBeans.getPrototype("cuba_TourStartAction", ACTION_ID, tour);
+    }
+
+    /**
      * Creates an action with the given id, tour and shortcut.
      *
      * @param id       action's identifier
@@ -52,19 +64,6 @@ public class TourStartAction extends BaseAction {
      */
     public static TourStartAction create(String id, @Nullable String shortcut, Tour tour) {
         return AppBeans.getPrototype("cuba_TourStartAction", id, shortcut, tour);
-    }
-
-    /**
-     * Creates an action with the given id, tour, shortcut and user setting.
-     *
-     * @param id          action's identifier
-     * @param shortcut    the shortcut to start the tour
-     * @param tour        the tour to start
-     * @param userSetting the setting that affects the launch of the tour
-     * @return the action
-     */
-    public static TourStartAction create(String id, @Nullable String shortcut, Tour tour, String userSetting) {
-        return AppBeans.getPrototype("cuba_TourStartAction", id, shortcut, tour, userSetting);
     }
 
     /**
@@ -91,17 +90,10 @@ public class TourStartAction extends BaseAction {
     }
 
     /**
-     * Construct an action with given id and tour.
-     *
-     * @param id          action's identifier
-     * @param shortcut    the shortcut to start the tour
-     * @param tour        the tour to start
-     * @param userSetting the setting that affects the launch of the tour
+     * Set a parameter for the action that indicates that the action has a setting.
      */
-    protected TourStartAction(String id, @Nullable String shortcut, Tour tour, String userSetting) {
-        super(id, shortcut);
-        this.tour = tour;
-        this.userSetting = userSetting;
+    public void setSetting() {
+        hasSetting = true;
     }
 
     /**
@@ -111,18 +103,29 @@ public class TourStartAction extends BaseAction {
      */
     @Override
     public void actionPerform(Component component) {
-        if (userSetting != null) {
-            String actionPerformed = userSettingService.loadSetting(userSetting);
+        Preconditions.checkNotNullArgument(component);
 
-            if (actionPerformed == null) {
+        if (hasSetting) {
+            String settingName = component.getId() + ":" + ACTION_ID;
+            String startAction = userSettingService.loadSetting(ClientType.WEB, settingName);
 
-                if (tour.getCurrentStep() != null) {
-                    tour.cancel();
-                }
-                tour.start();
-
-                userSettingService.saveSetting(userSetting, "performed");
+            if (startAction == null) {
+                startTour();
+                userSettingService.saveSetting(ClientType.WEB, settingName, "complete");
             }
+            return;
         }
+
+        startTour();
+    }
+
+    /**
+     * Start the tour
+     */
+    protected void startTour() {
+        if (tour.getCurrentStep() != null) {
+            tour.cancel();
+        }
+        tour.start();
     }
 }
