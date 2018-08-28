@@ -22,7 +22,7 @@ public interface Step {
     /**
      * Gets client specific component instance. Can be used in client module to simplify invocation of underlying API.
      *
-     * @param internalClass class of underlying component implementation based on Vaadin
+     * @param internalClass class of underlying component implementation
      * @param <X>           type of internal class
      * @return internal client specific component
      */

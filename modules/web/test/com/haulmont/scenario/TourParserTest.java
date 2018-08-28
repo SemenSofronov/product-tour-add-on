@@ -8,6 +8,7 @@ import com.haulmont.cuba.client.testsupport.CubaClientTestCase;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Resources;
 import com.haulmont.cuba.core.sys.ResourcesImpl;
+import com.haulmont.cuba.gui.GuiDevelopmentException;
 import com.haulmont.cuba.gui.components.Window;
 import com.haulmont.cuba.web.gui.WebComponentsFactory;
 import com.haulmont.cuba.web.gui.components.WebTextField;
@@ -99,7 +100,7 @@ public class TourParserTest extends CubaClientTestCase {
         validateSecondStep(steps.get(1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = GuiDevelopmentException.class)
     public void validateIncorrectAttachTo() {
         String file = resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectAttachTo.json");
 
@@ -108,7 +109,7 @@ public class TourParserTest extends CubaClientTestCase {
         tourParser.parseTour(file, null, window);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = GuiDevelopmentException.class)
     public void validateIncorrectAnchor() {
         String file = resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectAnchor.json");
 
@@ -117,7 +118,7 @@ public class TourParserTest extends CubaClientTestCase {
         tourParser.parseTour(file, null, window);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = GuiDevelopmentException.class)
     public void validateIncorrectTextContentMode() {
         String file = resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectTextContentMode.json");
 
@@ -126,7 +127,7 @@ public class TourParserTest extends CubaClientTestCase {
         tourParser.parseTour(file, null, window);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = GuiDevelopmentException.class)
     public void validateIncorrectTitleContentMode() {
         String file = resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectTitleContentMode.json");
 
@@ -173,7 +174,7 @@ public class TourParserTest extends CubaClientTestCase {
         tourParser.parseTour(file, null, window);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = GuiDevelopmentException.class)
     public void validateIncorrectAction() {
         String file = resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectAction.json");
 

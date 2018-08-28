@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.haulmont.bali.util.Preconditions;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.gui.ComponentsHelper;
+import com.haulmont.cuba.gui.GuiDevelopmentException;
 import com.haulmont.cuba.gui.components.Window;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Scope;
@@ -22,7 +23,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Parser of {@link WebTour} objects
+ * Parser of {@link Tour} objects
  */
 @Component("scenarioaddon_TourParser")
 @Scope("prototype")
@@ -183,7 +184,7 @@ public class TourParser {
 
             Consumer<StepButton.ClickEvent> clickListener = getClickListener(action);
             if (clickListener == null) {
-                throw new IllegalArgumentException("Action value not found!");
+                throw new GuiDevelopmentException("Couldn't parse the action value!", windowToExtend.getFrame().getId());
             }
             stepButton.addStepButtonClickListener(clickListener);
         }
@@ -245,7 +246,8 @@ public class TourParser {
             if (cubaComponent != null) {
                 step.setAttachedTo(cubaComponent);
             } else {
-                throw new IllegalArgumentException("AttachTo id not found!");
+                throw new GuiDevelopmentException("Couldn't parse the attachTo value!",
+                        windowToExtend.getFrame().getId());
             }
         }
     }
@@ -262,7 +264,8 @@ public class TourParser {
             Step.StepAnchor stepAnchor = Step.StepAnchor.fromId(anchor);
 
             if (stepAnchor == null) {
-                throw new IllegalArgumentException("Anchor value not found!");
+                throw new GuiDevelopmentException("Couldn't parse the anchor value!",
+                        windowToExtend.getFrame().getId());
             }
 
             step.setAnchor(stepAnchor);
@@ -281,7 +284,8 @@ public class TourParser {
             Step.ContentMode contentMode = Step.ContentMode.fromId(titleContentMode);
 
             if (contentMode == null) {
-                throw new IllegalArgumentException("TitleContentMode value not found!");
+                throw new GuiDevelopmentException("Couldn't parse the titleContentMode value!",
+                        windowToExtend.getFrame().getId());
             }
 
             step.setTitleContentMode(contentMode);
@@ -300,7 +304,8 @@ public class TourParser {
             Step.ContentMode contentMode = Step.ContentMode.fromId(textContentMode);
 
             if (contentMode == null) {
-                throw new IllegalArgumentException("TextContentMode value not found!");
+                throw new GuiDevelopmentException("Couldn't parse the textContentMode value!",
+                        windowToExtend.getFrame().getId());
             }
 
             step.setTextContentMode(contentMode);
