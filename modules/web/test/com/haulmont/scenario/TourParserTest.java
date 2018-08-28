@@ -15,9 +15,7 @@ import com.haulmont.cuba.web.gui.components.WebTextField;
 import mockit.integration.junit4.JMockit;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import java.util.List;
@@ -25,9 +23,6 @@ import java.util.Objects;
 
 @RunWith(JMockit.class)
 public class TourParserTest extends CubaClientTestCase {
-
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
 
     protected Resources resources;
     protected TestTourParser tourParser;
