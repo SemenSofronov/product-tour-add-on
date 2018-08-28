@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 public interface StepButton {
 
     /**
-     * Get client specific component instance. Can be used in client module to simplify invocation of underlying API.
+     * Gets client specific component instance. Can be used in client module to simplify invocation of underlying API.
      *
      * @param internalClass class of underlying component implementation based on Vaadin
      * @param <X>           type of internal class
@@ -23,14 +23,14 @@ public interface StepButton {
     <X> X unwrap(Class<X> internalClass);
 
     /**
-     * Get the step the button is attached to.
+     * Gets the step the button is attached to.
      *
      * @return the step
      */
     Step getStep();
 
     /**
-     * Add the button to the given step.
+     * Adds the button to the given step.
      * Use {@link Step#addButton(StepButton)} instead.
      *
      * @param step the step the button should be added to
@@ -38,28 +38,28 @@ public interface StepButton {
     void setStep(Step step);
 
     /**
-     * Get the caption of the button
+     * Gets the caption of the button.
      *
      * @return the caption of the button
      */
     String getCaption();
 
     /**
-     * Set the caption of the button.
+     * Sets the caption of the button.
      *
      * @param caption the caption to be set
      */
     void setCaption(String caption);
 
     /**
-     * Get the enabled state of the button.
+     * Gets the enabled state of the button.
      *
-     * @return <code>true</code> if the button is enabled, <code>false</code> else
+     * @return <code>true</code> if the button is enabled, <code>false</code> otherwise
      */
     boolean isEnabled();
 
     /**
-     * Set the enabled state of the button.
+     * Sets the enabled state of the button.
      *
      * @param enabled the enabled state to be set
      */
@@ -69,7 +69,7 @@ public interface StepButton {
      * Adds one or more style names to this component. Multiple styles can be
      * specified as a space-separated list of style names.
      *
-     * @param style one or more style names separated by space.
+     * @param style one or more style names separated by space
      */
     void addStyleName(String style);
 
@@ -77,14 +77,14 @@ public interface StepButton {
      * Removes one or more style names from component. Multiple styles can be
      * specified as a space-separated list of style names.
      *
-     * @param style one or more style names separated by space.
+     * @param style one or more style names separated by space
      */
     void removeStyleName(String style);
 
     /**
      * Styles implementation is client-type-specific.
      *
-     * @return current style name.
+     * @return current style name
      */
     String getStyleName();
 
@@ -95,7 +95,7 @@ public interface StepButton {
      * <p>
      * Styles implementation is client-type-specific.
      *
-     * @param style one or more style names separated by space.
+     * @param style one or more style names separated by space
      */
     void setStyleName(String style);
 
@@ -107,7 +107,7 @@ public interface StepButton {
     void addStepButtonClickListener(Consumer<ClickEvent> listener);
 
     /**
-     * Remove the given click listener from the button.
+     * Removes the given click listener from the button.
      *
      * @param listener the listener to be removed
      */
@@ -120,7 +120,7 @@ public interface StepButton {
         protected Component.MouseEventDetails details;
 
         /**
-         * Construct a new provider.
+         * Constructs a new provider.
          *
          * @param source the source of the provider
          */

@@ -36,7 +36,7 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
     protected Component attachedTo;
 
     /**
-     * Construct a new step with an id.
+     * Constructs a new step with an id.
      *
      * @param id the id of the step
      */
@@ -46,7 +46,7 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
     }
 
     /**
-     * Create an extension for a vaadin step.
+     * Creates an extension for a vaadin step.
      *
      * @param id the step id
      * @return the vaadin step extension
@@ -412,7 +412,7 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
     }
 
     /**
-     * Convert a cuba step anchor to a vaadin step anchor
+     * Converts a cuba step anchor to a vaadin step anchor.
      *
      * @param stepAnchor the cuba step anchor
      * @return the vaadin step anchor
@@ -435,7 +435,7 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
     }
 
     /**
-     * Convert a vaadin step anchor to a cuba step anchor
+     * Converts a vaadin step anchor to a cuba step anchor.
      *
      * @param stepAnchor the vaadin step anchor
      * @return the cuba step anchor
@@ -458,7 +458,7 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
     }
 
     /**
-     * Convert a cuba content mode to a vaadin content mode
+     * Converts a cuba content mode to a vaadin content mode.
      *
      * @param contentMode the cuba content mode
      * @return the vaadin content mode
@@ -479,7 +479,7 @@ public class WebStep extends WebAbstractExtension<org.vaadin.addons.producttour.
     }
 
     /**
-     * Convert a vaadin content mode to a cuba content mode
+     * Converts a vaadin content mode to a cuba content mode.
      *
      * @param contentMode the vaadin content mode
      * @return the cuba content mode

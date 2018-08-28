@@ -46,8 +46,8 @@ public class TourParserTest extends CubaClientTestCase {
 
     protected class TestTourParser extends TourParser {
         @Override
-        public com.company.scenarioaddon.web.gui.components.Tour createTour(String json, String messagesPack, Window extension) {
-            return super.createTour(json, messagesPack, extension);
+        public com.company.scenarioaddon.web.gui.components.Tour parseTour(String json, String messagesPack, Window extension) {
+            return super.parseTour(json, messagesPack, extension);
         }
 
         protected void setMessages(Messages messages) {
@@ -77,19 +77,19 @@ public class TourParserTest extends CubaClientTestCase {
 
     @Test
     public void parseCorrectTourFromJson() {
-        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/correctTour.json"));
+        String file = resources.getResourceAsString("com/haulmont/scenario/json_data/correctTour.json");
 
         Window window = componentsFactory.createComponent(Window.class);
 
         textField1 = new TestTextField();
-        textField1.setId("button1");
+        textField1.setId("textField1");
         window.add(textField1);
 
         textField2 = new TestTextField();
-        textField2.setId("button2");
+        textField2.setId("textField2");
         window.add(textField2);
 
-        com.company.scenarioaddon.web.gui.components.Tour tour = tourParser.createTour(file,
+        com.company.scenarioaddon.web.gui.components.Tour tour = tourParser.parseTour(file,
                 "com/haulmont/scenario/messages.properties", window);
 
         List<Step> steps = tour.getSteps();
@@ -99,119 +99,87 @@ public class TourParserTest extends CubaClientTestCase {
         validateSecondStep(steps.get(1));
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void validateIncorrectAttachTo() {
-        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectAttachTo.json"));
+        String file = resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectAttachTo.json");
 
         Window window = componentsFactory.createComponent(Window.class);
 
-        try {
-            tourParser.createTour(file, null, window);
-        } catch (IllegalArgumentException e) {
-            Assert.assertEquals(e.getMessage(), "AttachTo id is wrong!");
-        }
+        tourParser.parseTour(file, null, window);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void validateIncorrectAnchor() {
-        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectAnchor.json"));
+        String file = resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectAnchor.json");
 
         Window window = componentsFactory.createComponent(Window.class);
 
-        try {
-            tourParser.createTour(file, null, window);
-        } catch (IllegalArgumentException e) {
-            Assert.assertEquals(e.getMessage(), "Anchor value is wrong!");
-        }
+        tourParser.parseTour(file, null, window);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void validateIncorrectTextContentMode() {
-        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectTextContentMode.json"));
+        String file = resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectTextContentMode.json");
 
         Window window = componentsFactory.createComponent(Window.class);
 
-        try {
-            tourParser.createTour(file, null, window);
-        } catch (IllegalArgumentException e) {
-            Assert.assertEquals(e.getMessage(), "TextContentMode value is wrong!");
-        }
+        tourParser.parseTour(file, null, window);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void validateIncorrectTitleContentMode() {
-        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectTitleContentMode.json"));
+        String file = resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectTitleContentMode.json");
 
         Window window = componentsFactory.createComponent(Window.class);
 
-        try {
-            tourParser.createTour(file, null, window);
-        } catch (IllegalArgumentException e) {
-            Assert.assertEquals(e.getMessage(), "TitleContentMode value is wrong!");
-        }
+        tourParser.parseTour(file, null, window);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void validateIncorrectWidth() {
-        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectWidth.json"));
+        String file = resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectWidth.json");
 
         Window window = componentsFactory.createComponent(Window.class);
 
-        try {
-            tourParser.createTour(file, null, window);
-        } catch (IllegalArgumentException e) {
-            Assert.assertNotNull(e.getMessage());
-        }
+        tourParser.parseTour(file, null, window);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void validateIncorrectHeight() {
-        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectHeight.json"));
+        String file = resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectHeight.json");
 
         Window window = componentsFactory.createComponent(Window.class);
 
-        try {
-            tourParser.createTour(file, null, window);
-        } catch (IllegalArgumentException e) {
-            Assert.assertNotNull(e.getMessage());
-        }
+        tourParser.parseTour(file, null, window);
     }
 
     @Test
     public void validateEmptyId() {
-        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/emptyId.json"));
+        String file = resources.getResourceAsString("com/haulmont/scenario/json_data/emptyId.json");
 
         Window window = componentsFactory.createComponent(Window.class);
 
-        Tour tour = tourParser.createTour(file, null, window);
+        Tour tour = tourParser.parseTour(file, null, window);
         Step step = tour.getSteps().get(0);
         Assert.assertNotNull(step.getId());
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void validateEmptyCaption() {
-        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/emptyCaption.json"));
+        String file = resources.getResourceAsString("com/haulmont/scenario/json_data/emptyCaption.json");
 
         Window window = componentsFactory.createComponent(Window.class);
 
-        try {
-            tourParser.createTour(file, null, window);
-        } catch (IllegalArgumentException e) {
-            Assert.assertNotNull(e.getMessage());
-        }
+        tourParser.parseTour(file, null, window);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void validateIncorrectAction() {
-        String file = Objects.requireNonNull(resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectAction.json"));
+        String file = resources.getResourceAsString("com/haulmont/scenario/json_data/incorrectAction.json");
 
         Window window = componentsFactory.createComponent(Window.class);
 
-        try {
-            tourParser.createTour(file, null, window);
-        } catch (IllegalArgumentException e) {
-            Assert.assertEquals(e.getMessage(), "Action value is wrong!");
-        }
+        tourParser.parseTour(file, null, window);
     }
 
     protected void validateFirstStep(Step firstStep) {

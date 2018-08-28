@@ -28,7 +28,7 @@ public class TourStartAction extends BaseAction {
 
     protected Tour tour;
 
-    protected boolean hasSetting;
+    protected boolean settingsEnabled;
 
     @Inject
     protected UserSettingService userSettingService;
@@ -67,7 +67,7 @@ public class TourStartAction extends BaseAction {
     }
 
     /**
-     * Construct an action with given id and tour.
+     * Constructs an action with given id and tour.
      *
      * @param id   action's identifier
      * @param tour the tour to start
@@ -78,7 +78,7 @@ public class TourStartAction extends BaseAction {
     }
 
     /**
-     * Construct an action with given id, tour and shortcut.
+     * Constructs an action with given id, tour and shortcut.
      *
      * @param id       action's identifier
      * @param shortcut the shortcut to start the tour
@@ -90,10 +90,19 @@ public class TourStartAction extends BaseAction {
     }
 
     /**
-     * Set a parameter for the action that indicates that the action has a setting.
+     * Enables/Disables settings.
      */
-    public void setSetting() {
-        hasSetting = true;
+    public void setSettingsEnabled(boolean settingsEnabled) {
+        this.settingsEnabled = settingsEnabled;
+    }
+
+    /**
+     * Gets the settings state.
+     *
+     * @return the state
+     */
+    public boolean isSettingsEnabled() {
+        return settingsEnabled;
     }
 
     /**
@@ -105,22 +114,32 @@ public class TourStartAction extends BaseAction {
     public void actionPerform(Component component) {
         Preconditions.checkNotNullArgument(component);
 
-        if (hasSetting) {
-            String settingName = component.getId() + ":" + ACTION_ID;
-            String startAction = userSettingService.loadSetting(ClientType.WEB, settingName);
+        if (settingsEnabled) {
+            String componentId = component.getId();
+            String settingId = createSettingId(componentId);
+            String startAction = userSettingService.loadSetting(ClientType.WEB, settingId);
 
             if (startAction == null) {
                 startTour();
-                userSettingService.saveSetting(ClientType.WEB, settingName, "complete");
+                userSettingService.saveSetting(ClientType.WEB, settingId, "complete");
             }
-            return;
+        } else {
+            startTour();
         }
-
-        startTour();
     }
 
     /**
-     * Start the tour
+     * Creates setting id.
+     *
+     * @param componentId prefix
+     * @return the setting id
+     */
+    protected String createSettingId(String componentId) {
+        return componentId + ":" + ACTION_ID;
+    }
+
+    /**
+     * Starts the tour
      */
     protected void startTour() {
         if (tour.getCurrentStep() != null) {

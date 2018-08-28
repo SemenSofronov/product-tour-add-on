@@ -21,7 +21,7 @@ public class WebStepButton extends WebAbstractExtension<org.vaadin.addons.produc
     protected List<Consumer<ClickEvent>> listenerList = null;
 
     /**
-     * Creates a new button with the given caption.
+     * Constructs a new button with the given caption.
      *
      * @param caption The caption of the button
      */
@@ -31,7 +31,7 @@ public class WebStepButton extends WebAbstractExtension<org.vaadin.addons.produc
     }
 
     /**
-     * Create an extension for a vaadin step button.
+     * Creates an extension for a vaadin step button.
      *
      * @param caption The step button caption
      * @return The vaadin step button extension

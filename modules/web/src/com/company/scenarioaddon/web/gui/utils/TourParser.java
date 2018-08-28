@@ -19,11 +19,10 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * Parser for {@link WebTour} objects
+ * Parser of {@link WebTour} objects
  */
 @Component("scenarioaddon_TourParser")
 @Scope("prototype")
@@ -36,36 +35,46 @@ public class TourParser {
 
     protected String messagesPack;
 
-    protected Window extension;
+    protected Window windowToExtend;
 
     /**
      * Creates a tour from a given json extending a given window using a given messages pack.
      *
-     * @param json         the json file
-     * @param messagesPack the messages pack
-     * @param extension    the window to extend
+     * @param json           the json file
+     * @param messagesPack   the messages pack
+     * @param windowToExtend the window to extend
      * @return the tour
      */
-    public Tour createTour(String json, String messagesPack, Window extension) {
+    public Tour parseTour(String json, String messagesPack, Window windowToExtend) {
 
-        Preconditions.checkNotNullArgument(extension, "Extension is required!");
+        Preconditions.checkNotNullArgument(windowToExtend, "windowToExtend is required!");
 
-        initTourParser(messagesPack, extension);
+        initTourParser(messagesPack, windowToExtend);
 
-        Tour tour = new WebTour(extension);
+        Tour tour = createTour(windowToExtend);
         loadTour(json, tour);
         return tour;
     }
 
     /**
+     * Initializes a tour extending the given window.
+     *
+     * @param windowToExtend the window to extend
+     * @return the tour
+     */
+    protected Tour createTour(Window windowToExtend) {
+        return new WebTour(windowToExtend);
+    }
+
+    /**
      * Initialize the tour with given messages pack and window.
      *
-     * @param messagesPack the messages pack
-     * @param extension    the window
+     * @param messagesPack   the messages pack
+     * @param windowToExtend the window
      */
-    protected void initTourParser(String messagesPack, Window extension) {
+    protected void initTourParser(String messagesPack, Window windowToExtend) {
         this.messagesPack = messagesPack;
-        this.extension = extension;
+        this.windowToExtend = windowToExtend;
     }
 
     /**
@@ -74,10 +83,11 @@ public class TourParser {
      * @param json the json file
      * @param tour the loading tour
      */
+    @SuppressWarnings("unchecked")
     protected void loadTour(String json, Tour tour) {
         ArrayList steps = gson.fromJson(json, ArrayList.class);
         for (Object step : steps) {
-            Map stepMap = (Map) step;
+            Map<String, Object> stepMap = (Map<String, Object>) step;
             loadStep(stepMap, tour);
         }
     }
@@ -88,7 +98,7 @@ public class TourParser {
      * @param stepMap the step map
      * @param tour    the tour
      */
-    protected void loadStep(Map stepMap, Tour tour) {
+    protected void loadStep(Map<String, Object> stepMap, Tour tour) {
         Step step = createStepWithId(stepMap);
 
         loadText(stepMap, step);
@@ -117,7 +127,8 @@ public class TourParser {
      * @param stepMap the step map
      * @param step    the step
      */
-    protected void loadButtons(Map stepMap, Step step) {
+    @SuppressWarnings("unchecked")
+    protected void loadButtons(Map<String, Object> stepMap, Step step) {
         if (stepMap.get("buttons") != null) {
             ArrayList buttons = (ArrayList) stepMap.get("buttons");
 
@@ -172,7 +183,7 @@ public class TourParser {
 
             Consumer<StepButton.ClickEvent> clickListener = getClickListener(action);
             if (clickListener == null) {
-                throw new IllegalArgumentException("Action value is wrong!");
+                throw new IllegalArgumentException("Action value not found!");
             }
             stepButton.addStepButtonClickListener(clickListener);
         }
@@ -212,7 +223,7 @@ public class TourParser {
      * @param stepMap the step map
      * @return the step
      */
-    protected Step createStepWithId(Map stepMap) {
+    protected Step createStepWithId(Map<String, Object> stepMap) {
         String id = null;
         if (StringUtils.isNotEmpty((String) stepMap.get("id"))) {
             id = (String) stepMap.get("id");
@@ -226,7 +237,7 @@ public class TourParser {
      * @param stepMap the step map
      * @param step    the step
      */
-    protected void loadAttachTo(Map stepMap, Step step) {
+    protected void loadAttachTo(Map<String, Object> stepMap, Step step) {
         if (StringUtils.isNotEmpty((String) stepMap.get("attachTo"))) {
             String attachTo = (String) stepMap.get("attachTo");
             com.haulmont.cuba.gui.components.Component cubaComponent = getCubaComponent(attachTo);
@@ -234,7 +245,7 @@ public class TourParser {
             if (cubaComponent != null) {
                 step.setAttachedTo(cubaComponent);
             } else {
-                throw new IllegalArgumentException("AttachTo id is wrong!");
+                throw new IllegalArgumentException("AttachTo id not found!");
             }
         }
     }
@@ -245,13 +256,13 @@ public class TourParser {
      * @param stepMap the step map
      * @param step    the step
      */
-    protected void loadStepAnchor(Map stepMap, Step step) {
+    protected void loadStepAnchor(Map<String, Object> stepMap, Step step) {
         if (StringUtils.isNotEmpty((String) stepMap.get("anchor"))) {
             String anchor = (String) stepMap.get("anchor");
             Step.StepAnchor stepAnchor = Step.StepAnchor.fromId(anchor);
 
             if (stepAnchor == null) {
-                throw new IllegalArgumentException("Anchor value is wrong!");
+                throw new IllegalArgumentException("Anchor value not found!");
             }
 
             step.setAnchor(stepAnchor);
@@ -264,13 +275,13 @@ public class TourParser {
      * @param stepMap the step map
      * @param step    the step
      */
-    protected void loadTitleContentMode(Map stepMap, Step step) {
+    protected void loadTitleContentMode(Map<String, Object> stepMap, Step step) {
         if (StringUtils.isNotEmpty((String) stepMap.get("titleContentMode"))) {
             String titleContentMode = (String) stepMap.get("titleContentMode");
             Step.ContentMode contentMode = Step.ContentMode.fromId(titleContentMode);
 
             if (contentMode == null) {
-                throw new IllegalArgumentException("TitleContentMode value is wrong!");
+                throw new IllegalArgumentException("TitleContentMode value not found!");
             }
 
             step.setTitleContentMode(contentMode);
@@ -283,13 +294,13 @@ public class TourParser {
      * @param stepMap the step map
      * @param step    the step
      */
-    protected void loadTextContentMode(Map stepMap, Step step) {
+    protected void loadTextContentMode(Map<String, Object> stepMap, Step step) {
         if (StringUtils.isNotEmpty((String) stepMap.get("textContentMode"))) {
             String textContentMode = (String) stepMap.get("textContentMode");
             Step.ContentMode contentMode = Step.ContentMode.fromId(textContentMode);
 
             if (contentMode == null) {
-                throw new IllegalArgumentException("TextContentMode value is wrong!");
+                throw new IllegalArgumentException("TextContentMode value not found!");
             }
 
             step.setTextContentMode(contentMode);
@@ -302,7 +313,7 @@ public class TourParser {
      * @param stepMap the step map
      * @param step    the step
      */
-    protected void loadScrollTo(Map stepMap, Step step) {
+    protected void loadScrollTo(Map<String, Object> stepMap, Step step) {
         if (StringUtils.isNotEmpty((String) stepMap.get("scrollTo"))) {
             String scrollTo = (String) stepMap.get("scrollTo");
 
@@ -316,7 +327,7 @@ public class TourParser {
      * @param stepMap the step map
      * @param step    the step
      */
-    protected void loadCancellable(Map stepMap, Step step) {
+    protected void loadCancellable(Map<String, Object> stepMap, Step step) {
         if (StringUtils.isNotEmpty((String) stepMap.get("cancellable"))) {
             String cancellable = (String) stepMap.get("cancellable");
 
@@ -330,7 +341,7 @@ public class TourParser {
      * @param stepMap the step map
      * @param step    the step
      */
-    protected void loadModal(Map stepMap, Step step) {
+    protected void loadModal(Map<String, Object> stepMap, Step step) {
         if (StringUtils.isNotEmpty((String) stepMap.get("modal"))) {
             String modal = (String) stepMap.get("modal");
 
@@ -344,7 +355,7 @@ public class TourParser {
      * @param stepMap the step map
      * @param step    the step
      */
-    protected void loadHeight(Map stepMap, Step step) {
+    protected void loadHeight(Map<String, Object> stepMap, Step step) {
         if (StringUtils.isNotEmpty((String) stepMap.get("height"))) {
             String height = (String) stepMap.get("height");
 
@@ -358,7 +369,7 @@ public class TourParser {
      * @param stepMap the step map
      * @param step    the step
      */
-    protected void loadWidth(Map stepMap, Step step) {
+    protected void loadWidth(Map<String, Object> stepMap, Step step) {
         if (StringUtils.isNotEmpty((String) stepMap.get("width"))) {
             String width = (String) stepMap.get("width");
 
@@ -372,7 +383,7 @@ public class TourParser {
      * @param stepMap the step map
      * @param step    the step
      */
-    protected void loadTitle(Map stepMap, Step step) {
+    protected void loadTitle(Map<String, Object> stepMap, Step step) {
         if (StringUtils.isNotEmpty((String) stepMap.get("title"))) {
             String title = (String) stepMap.get("title");
 
@@ -387,7 +398,7 @@ public class TourParser {
      * @param stepMap the step map
      * @param step    the step
      */
-    protected void loadText(Map stepMap, Step step) {
+    protected void loadText(Map<String, Object> stepMap, Step step) {
         if (StringUtils.isNotEmpty((String) stepMap.get("text"))) {
             String text = (String) stepMap.get("text");
 
@@ -412,14 +423,14 @@ public class TourParser {
     }
 
     /**
-     * Get CUBA component from an extension by a component id.
+     * Get CUBA component from an windowToExtend by a component id.
      *
      * @param attachId the component id
      * @return the CUBA component
      */
     @Nullable
     protected com.haulmont.cuba.gui.components.Component getCubaComponent(String attachId) {
-        return ComponentsHelper.findComponent(extension.getFrame(), attachId);
+        return ComponentsHelper.findComponent(windowToExtend.getFrame(), attachId);
     }
 
     /**
@@ -436,18 +447,20 @@ public class TourParser {
 
             String actionId = split[1];
             if (split[0].equals("tour")) {
-                if (TourActionType.fromId(actionId) == null) {
+                TourActionType actionType = TourActionType.fromId(actionId);
+                if (actionType == null) {
                     return null;
                 }
-                return Objects.requireNonNull(TourActionType.fromId(actionId))::execute;
+                return actionType::execute;
 
             }
 
             if (split[0].equals("step")) {
-                if (StepActionType.fromId(actionId) == null) {
+                StepActionType stepActionType = StepActionType.fromId(actionId);
+                if (stepActionType == null) {
                     return null;
                 }
-                return Objects.requireNonNull(StepActionType.fromId(actionId))::execute;
+                return stepActionType::execute;
             }
 
         }

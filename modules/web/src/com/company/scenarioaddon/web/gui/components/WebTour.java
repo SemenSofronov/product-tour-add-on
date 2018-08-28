@@ -32,6 +32,11 @@ public class WebTour extends WebAbstractExtension<org.vaadin.addons.producttour.
      */
     class CubaTour extends org.vaadin.addons.producttour.tour.Tour {
 
+        /**
+         * Constructs a new tour extending a target component.
+         *
+         * @param target the target component
+         */
         public CubaTour(AbstractClientConnector target) {
             extendInternal(target);
         }
@@ -41,7 +46,7 @@ public class WebTour extends WebAbstractExtension<org.vaadin.addons.producttour.
         }
 
         /**
-         * Extend a component of our choice.
+         * Extends a component of our choice.
          *
          * @param target the target to extend
          */
@@ -53,7 +58,7 @@ public class WebTour extends WebAbstractExtension<org.vaadin.addons.producttour.
     }
 
     /**
-     * Construct a new tour extending a component.
+     * Constructs a new tour extending a component.
      *
      * @param component the component to extend
      */
@@ -62,7 +67,7 @@ public class WebTour extends WebAbstractExtension<org.vaadin.addons.producttour.
     }
 
     /**
-     * Create an extension for a vaadin tour.
+     * Creates an extension for a vaadin tour.
      *
      * @param component the component to extend
      * @return the vaadin tour extension
@@ -146,7 +151,7 @@ public class WebTour extends WebAbstractExtension<org.vaadin.addons.producttour.
     }
 
     /**
-     * Get a cuba step by its vaadin step.
+     * Gets a cuba step by its vaadin step.
      *
      * @param vaadinStep the vaadin step
      * @return the cuba step by the vaadin step

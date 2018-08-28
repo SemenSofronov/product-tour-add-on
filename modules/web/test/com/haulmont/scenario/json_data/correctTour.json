@@ -9,7 +9,7 @@
     "titleContentMode": "html",
     "cancellable": "true",
     "scrollTo": "true",
-    "attachTo": "button1",
+    "attachTo": "textField1",
     "anchor": "left",
     "buttons": [
       {
@@ -30,7 +30,7 @@
     "id": "step2",
     "text": "text",
     "title": "Title",
-    "attachTo": "button2",
+    "attachTo": "textField2",
     "anchor": "top",
     "buttons": [
       {

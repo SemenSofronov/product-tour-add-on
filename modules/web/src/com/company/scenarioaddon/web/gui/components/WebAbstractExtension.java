@@ -8,7 +8,7 @@ package com.company.scenarioaddon.web.gui.components;
 import com.vaadin.server.AbstractExtension;
 
 /**
- * Base class for web extensions
+ * Base class for web extensions.
  */
 public abstract class WebAbstractExtension<T extends AbstractExtension> {
 
@@ -22,7 +22,7 @@ public abstract class WebAbstractExtension<T extends AbstractExtension> {
     }
 
     /**
-     * Get the component extension
+     * Gets the component extension.
      *
      * @return the component extension
      */
@@ -31,7 +31,7 @@ public abstract class WebAbstractExtension<T extends AbstractExtension> {
     }
 
     /**
-     * Initialize a component extension.
+     * Initializes a component extension.
      *
      * @param extension The extension
      */

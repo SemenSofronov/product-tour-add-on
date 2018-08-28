@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 public interface Step {
 
     /**
-     * Get client specific component instance. Can be used in client module to simplify invocation of underlying API.
+     * Gets client specific component instance. Can be used in client module to simplify invocation of underlying API.
      *
      * @param internalClass class of underlying component implementation based on Vaadin
      * @param <X>           type of internal class
@@ -29,7 +29,7 @@ public interface Step {
     <X> X unwrap(Class<X> internalClass);
 
     /**
-     * Add the step to the given tour.
+     * Adds the step to the given tour.
      * Use {@link Tour#addStep(Step)} instead.
      *
      * @param tour the tour the step should be added to
@@ -37,79 +37,115 @@ public interface Step {
     void setTour(Tour tour);
 
     /**
-     * Get the tour this step is added to.
+     * Gets the tour this step is added to.
      *
      * @return the tour
      */
     Tour getTour();
 
+    /**
+     * Sets the step size to undefined.
+     */
     void setSizeUndefined();
 
+    /**
+     * Sets the step size to 100 percentage.
+     */
     void setSizeFull();
 
     /**
-     * Set the title of the step.
+     * Sets the title of the step.
      *
      * @param title the title to be set
      */
     void setTitle(String title);
 
     /**
-     * Get the title of the step.
+     * Gets the title of the step.
      *
      * @return the title of the step
      */
     String getTitle();
 
     /**
-     * Set the text of the step.
+     * Sets the text of the step.
      *
      * @param text the text to be set
      */
     void setText(String text);
 
     /**
-     * Get the text of the step.
+     * Gets the text of the step.
      *
      * @return the text of the step
      */
     String getText();
 
     /**
-     * Check if the step is currently visible.
+     * Checks if the step is currently visible.
      *
-     * @return <code>true</code> if the step is currently visible, <code>false</code> else
+     * @return <code>true</code> if the step is currently visible, <code>false</code> otherwise
      */
     boolean isVisible();
 
+    /**
+     * Sets the step width.
+     *
+     * @param width the width
+     */
     void setWidth(String width);
 
+    /**
+     * Gets the step width.
+     *
+     * @return the width
+     */
     float getWidth();
 
+    /**
+     * Sets the step height.
+     *
+     * @param height the height
+     */
     void setHeight(String height);
 
+    /**
+     * Gets the step height.
+     *
+     * @return the height
+     */
     float getHeight();
 
+    /**
+     * Gets the step height units.
+     *
+     * @return the height units
+     */
     int getHeightUnits();
 
+    /**
+     * Gets the step width units.
+     *
+     * @return the width units
+     */
     int getWidthUnits();
 
     /**
-     * Get the id of the step.
+     * Gets the id of the step.
      *
      * @return the id of the step
      */
     String getId();
 
     /**
-     * Get the component the step is attached to.
+     * Gets the component the step is attached to.
      *
      * @return the component or <code>null</code> if the step is not attached to any component
      */
     Component getAttachedTo();
 
     /**
-     * Set the component the step should be attached to.
+     * Sets the component the step will be attached to.
      * <p>
      * If set to <code>null</code>, the step will not be attached and shown in the middle of the
      * screen.
@@ -120,52 +156,51 @@ public interface Step {
     void setAttachedTo(Component component);
 
     /**
-     * Set the step to be not attached to any component. The step will then be shown in the middle of
+     * Sets the step to be not attached to any component. The step will then be shown in the middle of
      * the screen. This is equal to calling {@link #setAttachedTo(Component)} with
      * <code>null</code> as parameter.
      */
     void setDetached();
 
     /**
-     * Set the cancellable state of the step.
+     * Sets the cancellable state of the step.
      *
-     * @param cancellable <code>true</code> if the step should be cancellable, <code>false</code> else
+     * @param cancellable <code>true</code> if the step should be cancellable, <code>false</code> otherwise
      */
     void setCancellable(boolean cancellable);
 
     /**
-     * Get the cancellable state of the step.
+     * Gets the cancellable state of the step.
      *
-     * @return <code>true</code> if the step is cancellable, <code>false</code> else
+     * @return <code>true</code> if the step is cancellable, <code>false</code> otherwise
      */
     boolean isCancellable();
 
     /**
-     * Set the modality of the step.
+     * Sets the modality of the step.
      *
-     * @param modal <code>true</code> if the step should be modal, <code>false</code> else
+     * @param modal <code>true</code> if the step should be modal, <code>false</code> otherwise
      */
     void setModal(boolean modal);
 
     /**
-     * Get the modal state of the step.
+     * Gets the modal state of the step.
      *
-     * @return <code>true</code> if the step is modal, <code>false</code> else
+     * @return <code>true</code> if the step is modal, <code>false</code> otherwise
      */
     boolean isModal();
 
     /**
-     * Set the scrollTo state of the step.
+     * Sets the scrollTo state of the step.
      *
-     * @param scrollTo <code>true</code> if the step should be scrolled into view when shown, <code>false</code>
-     *                 else
+     * @param scrollTo <code>true</code> if the step should be scrolled into view when shown, <code>false</code> otherwise
      */
     void setScrollTo(boolean scrollTo);
 
     /**
-     * Get the scrollTo state of the step.
+     * Gets the scrollTo state of the step.
      *
-     * @return <code>true</code> if the step is scrolled to when shown, <code>false</code> else
+     * @return <code>true</code> if the step is scrolled to when shown, <code>false</code> otherwise
      */
     boolean isScrollTo();
 
@@ -177,7 +212,7 @@ public interface Step {
     void setTextContentMode(ContentMode contentMode);
 
     /**
-     * Get the content mode for the text of the step.
+     * Gets the content mode for the text of the step.
      *
      * @return the content mode for the text of the step
      */
@@ -191,35 +226,35 @@ public interface Step {
     void setTitleContentMode(ContentMode contentMode);
 
     /**
-     * Get the content mode for the title of the step.
+     * Gets the content mode for the title of the step.
      *
      * @return the content mode for the title of the step
      */
     ContentMode getTitleContentMode();
 
     /**
-     * Set the anchor the step is shown relative to the component it is attached to.
+     * Sets the anchor the step is shown relative to the component it is attached to.
      *
      * @param anchor the anchor to be set
      */
     void setAnchor(StepAnchor anchor);
 
     /**
-     * Get the anchor the step is shown relative to the component it is attached to.
+     * Gets the anchor the step is shown relative to the component it is attached to.
      *
      * @return the anchor of the step
      */
     StepAnchor getAnchor();
 
     /**
-     * Get the buttons of the step.
+     * Gets the buttons of the step.
      *
-     * @return the buttons of the step inside an unmodifiable container
+     * @return the unmodifiable list of step buttons
      */
     List<StepButton> getButtons();
 
     /**
-     * Get a button by its index.
+     * Gets a button by its index.
      *
      * @param index the index of the button to get
      * @return the button at the given index
@@ -227,48 +262,48 @@ public interface Step {
     StepButton getButtonByIndex(int index);
 
     /**
-     * Get the count of buttons of this step.
+     * Gets the count of buttons of this step.
      *
      * @return the count of buttons of this step
      */
     int getButtonCount();
 
     /**
-     * Add a button the step. The button will be shown in the order they are added.
+     * Adds a button the step. The button will be shown in the order they are added.
      *
      * @param button the button to be added
      */
     void addButton(StepButton button);
 
     /**
-     * Remove a button from the step.
+     * Removes a button from the step.
      *
      * @param button the button to be removed
      */
     void removeButton(StepButton button);
 
     /**
-     * Hide this step and trigger the cancel provider.
+     * Hides this step and trigger the cancel provider.
      */
     void cancel();
 
     /**
-     * Hide this step and trigger the complete provider.
+     * Hides this step and trigger the complete provider.
      */
     void complete();
 
     /**
-     * Hide this step.
+     * Hides this step.
      */
     void hide();
 
     /**
-     * Show this step.
+     * Shows this step.
      */
     void show();
 
     /**
-     * Scroll to this steps element.
+     * Scrolls to this steps element.
      */
     void scrollTo();
 
@@ -349,16 +384,16 @@ public interface Step {
     }
 
     /**
-     * Add the given listener to the step that will be triggered if the step is cancelled.
+     * Adds the given listener to the step that will be triggered if the step is cancelled.
      *
      * @param listener the listener to be added
      */
     void addCancelListener(Consumer<CancelEvent> listener);
 
     /**
-     * Remove the given listener from the step.
+     * Removes the given listener from the step.
      *
-     * @param listener the listener to be removed.
+     * @param listener the listener to be removed
      */
     void removeCancelListener(Consumer<CancelEvent> listener);
 
@@ -373,16 +408,16 @@ public interface Step {
     }
 
     /**
-     * Add the given listener to the step that will be triggered if the step is completed.
+     * Adds the given listener to the step that will be triggered if the step is completed.
      *
      * @param listener the listener to be added
      */
     void addCompleteListener(Consumer<CompleteEvent> listener);
 
     /**
-     * Remove the given listener from the step.
+     * Removes the given listener from the step.
      *
-     * @param listener the listener to be removed.
+     * @param listener the listener to be removed
      */
     void removeCompleteListener(Consumer<CompleteEvent> listener);
 
@@ -397,14 +432,14 @@ public interface Step {
     }
 
     /**
-     * Add the given listener to the step that will be triggered if the step is hidden.
+     * Adds the given listener to the step that will be triggered if the step is hidden.
      *
      * @param listener the listener to be added
      */
     void addHideListener(Consumer<HideEvent> listener);
 
     /**
-     * Remove the given listener from the step.
+     * Removes the given listener from the step.
      *
      * @param listener the listener to be removed.
      */
@@ -421,16 +456,16 @@ public interface Step {
     }
 
     /**
-     * Add the given listener to the step that will be triggered if the step is shown.
+     * Adds the given listener to the step that will be triggered if the step is shown.
      *
      * @param listener the listener to be added
      */
     void addShowListener(Consumer<ShowEvent> listener);
 
     /**
-     * Remove the given listener from the step.
+     * Removes the given listener from the step.
      *
-     * @param listener the listener to be removed.
+     * @param listener the listener to be removed
      */
     void removeShowListener(Consumer<ShowEvent> listener);
 
@@ -450,7 +485,7 @@ public interface Step {
     class StepEvent extends EventObject implements TourProvider, StepProvider {
 
         /**
-         * Construct a new provider.
+         * Constructs a new provider.
          *
          * @param source the source of the provider
          */

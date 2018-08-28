@@ -8,7 +8,7 @@ package com.company.scenarioaddon.web.gui.components;
 public interface StepButtonProvider {
 
     /**
-     * Get the button that is the source of the provider.
+     * Gets the button that is the source of the provider.
      *
      * @return the button that caused the provider
      */
