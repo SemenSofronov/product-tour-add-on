@@ -28,7 +28,7 @@ public class TourStartAction extends BaseAction {
 
     protected Tour tour;
 
-    protected boolean settingsEnabled;
+    protected boolean settingsEnabled = true;
 
     @Inject
     protected UserSettingService userSettingService;
@@ -121,7 +121,7 @@ public class TourStartAction extends BaseAction {
 
             if (startAction == null) {
                 startTour();
-                userSettingService.saveSetting(ClientType.WEB, settingId, "complete");
+                userSettingService.saveSetting(ClientType.WEB, settingId, "Complete");
             }
         } else {
             startTour();
@@ -139,7 +139,7 @@ public class TourStartAction extends BaseAction {
     }
 
     /**
-     * Starts the tour
+     * Starts the tour.
      */
     protected void startTour() {
         if (tour.getCurrentStep() != null) {
